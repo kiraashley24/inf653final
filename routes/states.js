@@ -7,7 +7,7 @@ router.route('/')
     .get(statesController.getAllStates)
     .post(statesController.createState);
 
-router.route('/:stateCode')
+    router.route('/:state')
     .get(verifyStates, statesController.getState)
     .put(verifyStates, statesController.updateState)
     .delete(verifyStates, statesController.deleteState);
