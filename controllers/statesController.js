@@ -2,24 +2,33 @@ const State = require('../model/State');
 
 const getAllStates = async (req, res) => {
     try {
-        // Read the statesData.json file
         const statesData = require('../model/statesData.json');
+        const { contig } = req.query;
 
         // Check if the statesData object exists and is not empty
         if (!statesData || Object.keys(statesData).length === 0) {
             return res.status(204).json({ 'message': 'No states found.' });
         }
 
-        // Since statesData contains a single state object, wrap it in an array
-        const states = [statesData];
+        let states = Object.values(statesData);
 
-        // Send the states as the response
+        // Filter states based on the 'contig' query parameter
+        if (contig === 'true') {
+            states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
+        } else if (contig === 'false') {
+            states = states.filter(state => state.code === 'AK' || state.code === 'HI');
+        }
+
+        // Send the filtered states as the response
         res.json(states);
     } catch (err) {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
 }
+
+
+
 
 
 const createState = async (req, res) => {
@@ -66,15 +75,19 @@ const deleteState = async (req, res) => {
 }
 
 const getState = async (req, res) => {
-    if (!req?.params?.stateCode) return res.status(400).json({ 'message': 'State code required.' });
+    if (!req?.stateCode) return res.status(400).json({ 'message': 'State code required.' });
 
-    const state = await State.findOne({ stateCode: req.params.stateCode }).exec();
-    if (!state) {
-        return res.status(204).json({ "message": `No state matches state code ${req.params.stateCode}.` });
+    try {
+        const state = await State.findOne({ stateCode: req.stateCode }).exec();
+        if (!state) {
+            return res.status(404).json({ "message": `No state matches state code ${req.stateCode}.` });
+        }
+        res.json(state);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ 'message': 'Internal server error.' });
     }
-    res.json(state);
 }
-
 module.exports = {
     getAllStates,
     createState,
