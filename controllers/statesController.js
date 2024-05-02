@@ -28,9 +28,6 @@ const getAllStates = async (req, res) => {
 }
 
 
-
-
-
 const createState = async (req, res) => {
     if (!req?.body?.stateCode || !req?.body?.funFacts) {
         return res.status(400).json({ 'message': 'State code and fun facts are required' });
@@ -75,12 +72,12 @@ const deleteState = async (req, res) => {
 }
 
 const getState = async (req, res) => {
-    if (!req?.stateCode) return res.status(400).json({ 'message': 'State code required.' });
+    if (!req?.params?.stateCode) return res.status(400).json({ 'message': 'State code required.' });
 
     try {
-        const state = await State.findOne({ stateCode: req.stateCode }).exec();
+        const state = await State.findOne({ stateCode: req.params.stateCode }).exec();
         if (!state) {
-            return res.status(404).json({ "message": `No state matches state code ${req.stateCode}.` });
+            return res.status(404).json({ "message": `No state matches state code ${req.params.stateCode}.` });
         }
         res.json(state);
     } catch (err) {
