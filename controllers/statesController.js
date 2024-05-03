@@ -103,26 +103,6 @@ const getState = async (req, res) => {
     }
 };
 
-const getFunFact = async (req, res) => {
-    const { stateCode } = req.params;
-
-    try {
-        const state = await State.findOne({ stateCode }).exec();
-
-        if (!state || !state.funFacts || state.funFacts.length === 0) {
-            return res.status(404).json({ message: 'No fun facts found for this state.' });
-        }
-
-        const randomIndex = Math.floor(Math.random() * state.funFacts.length);
-        const randomFunFact = state.funFacts[randomIndex];
-
-        res.json({ funFact: randomFunFact });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Internal server error.' });
-    }
-};
-
 const getCapital = (req, res) => {
     let { stateCode } = req.params;
 
@@ -226,6 +206,32 @@ const getAdmission = (req, res) => {
     }
 };
 
+const getFunFact = async (req, res) => {
+    let { stateCode } = req.params;
+
+    if (!stateCode) {
+        return res.status(400).json({ message: 'State code is required.' });
+    }
+
+    // Convert stateCode to uppercase
+    stateCode = stateCode.toUpperCase();
+
+    try {
+        const state = await State.findOne({ stateCode }).exec();
+
+        if (!state || !state.funFacts || state.funFacts.length === 0) {
+            return res.status(404).json({ message: 'No fun facts found for this state.' });
+        }
+
+        const randomIndex = Math.floor(Math.random() * state.funFacts.length);
+        const randomFunFact = state.funFacts[randomIndex];
+
+        res.json({ state: state.state, funfact: randomFunFact });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
 
 module.exports = {
     getAllStates,
@@ -236,5 +242,6 @@ module.exports = {
     getCapital, 
     getNickname, 
     getPopulation,
-    getAdmission
+    getAdmission, 
+    getFunFact
 };

@@ -17,5 +17,6 @@ router.get('/:stateCode([A-Za-z]{2})/capital', verifyStates, statesController.ge
 router.get('/:stateCode([A-Za-z]{2})/nickname', verifyStates, statesController.getNickname);
 router.get('/:stateCode([A-Za-z]{2})/population', verifyStates, statesController.getPopulation);
 router.get('/:stateCode([A-Za-z]{2})/admission', verifyStates, statesController.getAdmission);
+router.get('/:stateCode/funfact', verifyStates, statesController.getFunFact);
 
 module.exports = router;
