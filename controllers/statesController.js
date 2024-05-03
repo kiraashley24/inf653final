@@ -43,10 +43,10 @@ const createState = async (req, res) => {
         if (!state) {
             state = await State.create({
                 stateCode: req.body.stateCode,
-                funFacts: req.body.funfacts
+                funfacts: req.body.funfacts
             });
         } else {
-            state.funfacts = [...state.funfacts, ...req.body.funFacts];
+            state.funfacts = [...state.funfacts, ...req.body.funfacts];
             await state.save();
         }
 
@@ -58,6 +58,7 @@ const createState = async (req, res) => {
 }
 
 
+
 const updateState = async (req, res) => {
     if (!req?.body?.stateCode) {
         return res.status(400).json({ 'message': 'State code is required.' });
@@ -67,7 +68,7 @@ const updateState = async (req, res) => {
     if (!state) {
         return res.status(204).json({ "message": `No state matches state code ${req.body.stateCode}.` });
     }
-    if (req.body?.funFacts) state.funFacts = req.body.funFacts;
+    if (req.body?.funfacts) state.funfacts = req.body.funfacts;
     const result = await state.save();
     res.json(result);
 }
@@ -105,7 +106,7 @@ const getState = async (req, res) => {
 
         const mergedStateData = {
             ...stateData,
-            ...(stateFromMongo && stateFromMongo.funFacts.length > 0 ? { funFacts: stateFromMongo.funFacts } : {}) // Add funFacts only if they exist
+            ...(stateFromMongo && stateFromMongo.funfacts.length > 0 ? { funfacts: stateFromMongo.funfacts } : {}) // Add funFacts only if they exist
         };
 
         res.json(mergedStateData);
@@ -235,15 +236,15 @@ const getFunFact = async (req, res) => {
 
         const stateData = await State.findOne({ stateCode }).exec();
 
-        if (!stateData || !stateData.funFacts || stateData.funFacts.length === 0) {
+        if (!stateData || !stateData.funfacts || stateData.funfacts.length === 0) {
             const message = stateName ? `No fun facts found for ${stateName}.` : 'No fun facts found for this state.';
             return res.status(404).json({ message });
         }
 
-        const randomIndex = Math.floor(Math.random() * stateData.funFacts.length);
-        const randomFunFact = stateData.funFacts[randomIndex];
+        const randomIndex = Math.floor(Math.random() * stateData.funfacts.length);
+        const randomFunfact = stateData.funfacts[randomIndex];
 
-        res.json({ state: stateData.state, funfact: randomFunFact });
+        res.json({ state: stateData.state, funfact: randomFunfact });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
