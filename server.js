@@ -15,12 +15,16 @@ connectDB();
 
 // Define route handler for the root URL
 app.get('/', (req, res) => {
-    res.send('Hello, World!'); // Send a response to the client
+    res.sendFile('./views/index.html', { root:__dirname}); // Send a response to the client
 });
 // Apply the CORS middleware
 app.use(cors());
 // Middleware
 app.use(express.json());
+/*
+app.get('/*', (req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+})*/
 
 // Read the JSON file
 fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
