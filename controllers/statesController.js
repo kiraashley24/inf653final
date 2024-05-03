@@ -29,22 +29,34 @@ const getAllStates = async (req, res) => {
 
 
 const createState = async (req, res) => {
-    if (!req?.body?.stateCode || !req?.body?.funFacts) {
+    if (!req?.body?.stateCode || !req?.body?.funfacts) {
         return res.status(400).json({ 'message': 'State code and fun facts are required' });
     }
 
-    try {
-        const result = await State.create({
-            stateCode: req.body.stateCode,
-            funFacts: req.body.funFacts
-        });
+    if (!Array.isArray(req.body.funfacts)) {
+        return res.status(400).json({ 'message': 'Fun facts should be provided as an array' });
+    }
 
-        res.status(201).json(result);
+    try {
+        let state = await State.findOne({ stateCode: req.body.stateCode }).exec();
+
+        if (!state) {
+            state = await State.create({
+                stateCode: req.body.stateCode,
+                funFacts: req.body.funfacts
+            });
+        } else {
+            state.funfacts = [...state.funfacts, ...req.body.funFacts];
+            await state.save();
+        }
+
+        res.status(201).json(state);
     } catch (err) {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
 }
+
 
 const updateState = async (req, res) => {
     if (!req?.body?.stateCode) {
@@ -214,24 +226,30 @@ const getFunFact = async (req, res) => {
     }
 
     // Convert stateCode to uppercase
-    stateCode = stateCode.toUpperCase();
+    stateCode = stateCode.toUpperCase(); 
 
     try {
-        const state = await State.findOne({ stateCode }).exec();
+        const statesData = require('../model/statesData.json');
+        const state = statesData.find(state => state.code.toUpperCase() === stateCode);
+        const stateName = state ? state.state : null;
 
-        if (!state || !state.funFacts || state.funFacts.length === 0) {
-            return res.status(404).json({ message: 'No fun facts found for this state.' });
+        const stateData = await State.findOne({ stateCode }).exec();
+
+        if (!stateData || !stateData.funFacts || stateData.funFacts.length === 0) {
+            const message = stateName ? `No fun facts found for ${stateName}.` : 'No fun facts found for this state.';
+            return res.status(404).json({ message });
         }
 
-        const randomIndex = Math.floor(Math.random() * state.funFacts.length);
-        const randomFunFact = state.funFacts[randomIndex];
+        const randomIndex = Math.floor(Math.random() * stateData.funFacts.length);
+        const randomFunFact = stateData.funFacts[randomIndex];
 
-        res.json({ state: state.state, funfact: randomFunFact });
+        res.json({ state: stateData.state, funfact: randomFunFact });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 module.exports = {
     getAllStates,

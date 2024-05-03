@@ -19,4 +19,8 @@ router.get('/:stateCode([A-Za-z]{2})/population', verifyStates, statesController
 router.get('/:stateCode([A-Za-z]{2})/admission', verifyStates, statesController.getAdmission);
 router.get('/:stateCode/funfact', verifyStates, statesController.getFunFact);
 
+// Post
+router.post('/:stateCode/funfact', verifyStates, statesController.createState);
+
+
 module.exports = router;

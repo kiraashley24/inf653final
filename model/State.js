@@ -19,4 +19,11 @@ module.exports = mongoose.model('State', stateSchema);
 
 
 /*
-{"stateCode": "NE", "funFacts": "Also known as the Cornhusker State"}*/
+{"stateCode": "NE", "funFacts": "Also known as the Cornhusker State"}
+{
+    "stateCode": "CO",
+    "funfacts": [
+        "There are so many 14ers you can climb!"
+    ]
+}
+*/
