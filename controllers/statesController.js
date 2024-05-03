@@ -103,10 +103,138 @@ const getState = async (req, res) => {
     }
 };
 
+const getFunFact = async (req, res) => {
+    const { stateCode } = req.params;
+
+    try {
+        const state = await State.findOne({ stateCode }).exec();
+
+        if (!state || !state.funFacts || state.funFacts.length === 0) {
+            return res.status(404).json({ message: 'No fun facts found for this state.' });
+        }
+
+        const randomIndex = Math.floor(Math.random() * state.funFacts.length);
+        const randomFunFact = state.funFacts[randomIndex];
+
+        res.json({ funFact: randomFunFact });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
+
+const getCapital = (req, res) => {
+    let { stateCode } = req.params;
+
+    if (!stateCode) {
+        return res.status(400).json({ message: 'State code is required.' });
+    }
+
+    // Convert stateCode to uppercase
+    stateCode = stateCode.toUpperCase();
+
+    try {
+        const statesData = require('../model/statesData.json');
+        const state = statesData.find(state => state.code.toUpperCase() === stateCode);
+
+        if (!state) {
+            return res.status(404).json({ message: 'State not found.' });
+        }
+
+        res.json({ state: state.state, capital: state.capital_city });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
+const getNickname = (req, res) => {
+    let { stateCode } = req.params;
+
+    if (!stateCode) {
+        return res.status(400).json({ message: 'State code is required.' });
+    }
+
+    // Convert stateCode to uppercase
+    stateCode = stateCode.toUpperCase();
+
+    try {
+        const statesData = require('../model/statesData.json');
+        const state = statesData.find(state => state.code.toUpperCase() === stateCode);
+
+        if (!state) {
+            return res.status(404).json({ message: 'State not found.' });
+        }
+
+        res.json({ state: state.state, nickname: state.nickname });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
+
+const getPopulation = (req, res) => {
+    let { stateCode } = req.params;
+
+    if (!stateCode) {
+        return res.status(400).json({ message: 'State code is required.' });
+    }
+
+    // Convert stateCode to uppercase
+    stateCode = stateCode.toUpperCase();
+
+    try {
+        const statesData = require('../model/statesData.json');
+        const state = statesData.find(state => state.code.toUpperCase() === stateCode);
+
+        if (!state) {
+            return res.status(404).json({ message: 'State not found.' });
+        }
+
+        // Format population number with commas
+        const formattedPopulation = state.population.toLocaleString();
+
+        res.json({ state: state.state, population: formattedPopulation });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
+
+
+const getAdmission = (req, res) => {
+    let { stateCode } = req.params;
+
+    if (!stateCode) {
+        return res.status(400).json({ message: 'State code is required.' });
+    }
+
+    // Convert stateCode to uppercase
+    stateCode = stateCode.toUpperCase();
+
+    try {
+        const statesData = require('../model/statesData.json');
+        const state = statesData.find(state => state.code.toUpperCase() === stateCode);
+
+        if (!state) {
+            return res.status(404).json({ message: 'State not found.' });
+        }
+
+        res.json({ state: state.state, admitted: state.admission_date });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
+
+
 module.exports = {
     getAllStates,
     createState,
     updateState,
     deleteState,
-    getState
-}
+    getState,
+    getCapital, 
+    getNickname, 
+    getPopulation,
+    getAdmission
+};
