@@ -82,15 +82,11 @@ const getState = async (req, res) => {
             return res.status(404).json({ message: 'State not found.' });
         }
 
-        const stateFromMongo = await State.findOne({ stateCode }).exec();
-
-        if (!stateFromMongo) {
-            return res.status(404).json({ message: 'State not found.' });
-        }
+        let stateFromMongo = await State.findOne({ stateCode }).exec();
 
         const mergedStateData = {
             ...stateData,
-            funFacts: stateFromMongo.funFacts
+            funFacts: stateFromMongo ? stateFromMongo.funFacts : [] // Provide an empty array if no fun facts are found
         };
 
         res.json(mergedStateData);
