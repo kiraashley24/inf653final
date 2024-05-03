@@ -5,17 +5,21 @@ const verifyStates = async (req, res, next) => {
         return res.status(400).json({ message: 'State code is required.' });
     }
 
-    stateCode = stateCode.toUpperCase(); // Convert to uppercase
+    // Convert stateCode to uppercase
+    stateCode = stateCode.toUpperCase();
 
     try {
         const statesData = require('../model/statesData.json');
         const stateCodes = statesData.map(state => state.code.toUpperCase());
 
+        // Check if stateCode is valid
         if (!stateCodes.includes(stateCode)) {
-            return res.status(404).json({ message: 'State not found.' });
+            return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
         }
 
-        req.stateCode = stateCode; // Attach the state code to the request object
+        // Attach the stateCode to the request object
+        req.stateCode = stateCode;
+
         next(); // Call next middleware
     } catch (err) {
         console.error(err);
