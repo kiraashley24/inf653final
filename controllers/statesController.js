@@ -30,7 +30,7 @@ const getAllStates = async (req, res) => {
 
 const createState = async (req, res) => {
     if (!req?.body?.stateCode || !req?.body?.funfacts) {
-        return res.status(400).json({ 'message': 'State code and fun facts are required' });
+        return res.status(400).json({ 'message': 'State fun facts value required' });
     }
 
     if (!Array.isArray(req.body.funfacts)) {
@@ -50,38 +50,16 @@ const createState = async (req, res) => {
             await state.save();
         }
 
+        console.log('Created state:', state); // Log the created state
+
         res.status(201).json(state);
     } catch (err) {
-        console.error(err);
+        console.error(err); // Log the error
         res.status(500).json({ 'message': 'Internal server error' });
     }
 }
 
-/*
-const updateState = async (req, res) => {
-    if (!req?.body?.stateCode) {
-        return res.status(400).json({ 'message': 'State code is required.' });
-    }
 
-    const state = await State.findOne({ stateCode: req.body.stateCode }).exec();
-    if (!state) {
-        return res.status(204).json({ "message": `No state matches state code ${req.body.stateCode}.` });
-    }
-    if (req.body?.funfacts) state.funfacts = req.body.funfacts;
-    const result = await state.save();
-    res.json(result);
-}
-*/
-/*const deleteState = async (req, res) => {
-    if (!req?.body?.stateCode) return res.status(400).json({ 'message': 'State code required.' });
-
-    const state = await State.findOne({ stateCode: req.body.stateCode }).exec();
-    if (!state) {
-        return res.status(204).json({ "message": `No state matches state code ${req.body.stateCode}.` });
-    }
-    const result = await state.deleteOne(); //{ stateCode: req.body.stateCode }
-    res.json(result);
-}*/
 
 const getState = async (req, res) => {
     let { stateCode } = req.params;
@@ -358,5 +336,5 @@ module.exports = {
     getFunFact
 };
 
-    /*updateState,*/
+
    
