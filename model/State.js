@@ -15,3 +15,8 @@ const stateSchema = new Schema({
 
 
 module.exports = mongoose.model('State', stateSchema);
+
+
+
+/*
+{"stateCode": "NE", "funFacts": "Also known as the Cornhusker State"}*/
