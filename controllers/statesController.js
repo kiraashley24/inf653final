@@ -72,7 +72,14 @@ const deleteState = async (req, res) => {
 }
 
 const getState = async (req, res) => {
-    const { stateCode } = req.params;
+    let { stateCode } = req.params;
+
+    if (!stateCode) {
+        return res.status(400).json({ message: 'State code is required.' });
+    }
+
+    // Convert stateCode to uppercase
+    stateCode = stateCode.toUpperCase();
 
     try {
         const statesData = require('../model/statesData.json');
