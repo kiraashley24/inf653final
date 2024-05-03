@@ -86,7 +86,7 @@ const getState = async (req, res) => {
 
         const mergedStateData = {
             ...stateData,
-            funFacts: stateFromMongo ? stateFromMongo.funFacts : [] // Provide an empty array if no fun facts are found
+            ...(stateFromMongo && stateFromMongo.funFacts.length > 0 ? { funFacts: stateFromMongo.funFacts } : {}) // Add funFacts only if they exist
         };
 
         res.json(mergedStateData);
