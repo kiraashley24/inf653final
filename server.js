@@ -6,6 +6,7 @@ const app = express();
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const fs = require('fs');
+const cors = require('cors');
 
 const PORT = process.env.PORT || 3500;
 
@@ -16,7 +17,8 @@ connectDB();
 app.get('/', (req, res) => {
     res.send('Hello, World!'); // Send a response to the client
 });
-
+// Apply the CORS middleware
+app.use(cors());
 // Middleware
 app.use(express.json());
 
