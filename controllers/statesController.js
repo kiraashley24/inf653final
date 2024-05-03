@@ -57,8 +57,7 @@ const createState = async (req, res) => {
     }
 }
 
-
-
+/*
 const updateState = async (req, res) => {
     if (!req?.body?.stateCode) {
         return res.status(400).json({ 'message': 'State code is required.' });
@@ -72,7 +71,7 @@ const updateState = async (req, res) => {
     const result = await state.save();
     res.json(result);
 }
-
+*/
 const deleteState = async (req, res) => {
     if (!req?.body?.stateCode) return res.status(400).json({ 'message': 'State code required.' });
 
@@ -251,16 +250,67 @@ const getFunFact = async (req, res) => {
     }
 };
 
+const updateFunFact = async (req, res) => {
+    const { stateCode } = req.params;
+    const { index, funfact } = req.body;
+
+    if (!stateCode) {
+        return res.status(400).json({ message: 'State code is required.' });
+    }
+    if (!index) {
+        return res.status(400).json({ message: 'State fun fact index value required.' });
+    }
+    if (!funfact) {
+        return res.status(400).json({ message: 'State fun fact value required.' });
+    }
+
+    // Convert stateCode to uppercase
+    const upperStateCode = stateCode.toUpperCase();
+
+    try {
+        // Find the state in the database
+        let state = await State.findOne({ stateCode: upperStateCode }).exec();
+
+        if (!state) {
+            return res.status(404).json({ message: `State with code ${upperStateCode} not found.` });
+        }
+
+        // Adjust index to match zero-based array index
+        const adjustedIndex = parseInt(index) - 1;
+
+        // Check if the index is within bounds of the funfacts array
+        if (adjustedIndex < 0 || adjustedIndex >= state.funfacts.length) {
+            return res.status(400).json({ message: 'Invalid index provided.' });
+        }
+
+        // Update the funfact at the specified index
+        state.funfacts[adjustedIndex] = funfact;
+
+        // Save the updated state
+        const updatedState = await state.save();
+
+        // Return the updated state
+        res.json(updatedState);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
+
+
 
 module.exports = {
     getAllStates,
     createState,
-    updateState,
+    updateFunFact,
     deleteState,
     getState,
-    getCapital, 
-    getNickname, 
+    getCapital,
+    getNickname,
     getPopulation,
-    getAdmission, 
+    getAdmission,
     getFunFact
 };
+
+    /*updateState,*/
+   
