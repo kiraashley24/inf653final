@@ -10,7 +10,7 @@ router.route('/')
 router.route('/:stateCode')  // Use stateCode instead of state
     .get(verifyStates, statesController.getState)
     
-    .delete(verifyStates, statesController.deleteState);
+   
 
 // Add the new route for /states/:state/capital
 router.get('/:stateCode([A-Za-z]{2})/capital', verifyStates, statesController.getCapital);
@@ -24,6 +24,9 @@ router.post('/:stateCode/funfact', verifyStates, statesController.createState);
 
 //Patch
 router.patch('/:stateCode([A-Za-z]{2})/funfact', verifyStates, statesController.updateFunFact);
+
+//Delete
+router.delete('/:stateCode/funfact', verifyStates, statesController.deleteFunFact);
 
 
 module.exports = router;

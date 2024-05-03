@@ -72,7 +72,7 @@ const updateState = async (req, res) => {
     res.json(result);
 }
 */
-const deleteState = async (req, res) => {
+/*const deleteState = async (req, res) => {
     if (!req?.body?.stateCode) return res.status(400).json({ 'message': 'State code required.' });
 
     const state = await State.findOne({ stateCode: req.body.stateCode }).exec();
@@ -81,7 +81,7 @@ const deleteState = async (req, res) => {
     }
     const result = await state.deleteOne(); //{ stateCode: req.body.stateCode }
     res.json(result);
-}
+}*/
 
 const getState = async (req, res) => {
     let { stateCode } = req.params;
@@ -297,13 +297,59 @@ const updateFunFact = async (req, res) => {
     }
 };
 
+const deleteFunFact = async (req, res) => {
+    const { stateCode } = req.params;
+    const { index } = req.body;
+
+    if (!stateCode || !index) {
+        return res.status(400).json({ message: 'State code and fun fact index value required' });
+    }
+
+    // Convert stateCode to uppercase
+    const upperStateCode = stateCode.toUpperCase();
+
+    try {
+        const statesData = require('../model/statesData.json');
+        const state = statesData.find(state => state.code.toUpperCase() === upperStateCode);
+        const stateName = state ? state.state : null;
+
+        // Find the state in the database
+        let dbState = await State.findOne({ stateCode: upperStateCode }).exec();
+
+        if (!dbState) {
+            return res.status(404).json({ message: `State with code ${upperStateCode} not found.` });
+        }
+
+        // Adjust index to match zero-based array index
+        const adjustedIndex = parseInt(index) - 1;
+
+        // Check if the index is within bounds of the funfacts array
+        if (adjustedIndex < 0 || adjustedIndex >= dbState.funfacts.length) {
+            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}.` });
+        }
+
+        // Remove the funfact at the specified index
+        dbState.funfacts.splice(adjustedIndex, 1);
+
+        // Save the updated state
+        const updatedState = await dbState.save();
+
+        // Return the updated state
+        res.json(updatedState);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+};
+
+
 
 
 module.exports = {
     getAllStates,
     createState,
     updateFunFact,
-    deleteState,
+    deleteFunFact,
     getState,
     getCapital,
     getNickname,
