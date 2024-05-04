@@ -21,7 +21,8 @@ app.get('/products/:id', function (req, res, next) {
   
 // Connect to MongoDB
 connectDB();
-
+// Middleware
+app.use(express.json());
 
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
@@ -49,8 +50,7 @@ app.all('*', (req, res) => {
     }
 });
 
-// Middleware
-app.use(express.json());
+
 
 // Read the JSON file
 fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
