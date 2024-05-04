@@ -16,7 +16,7 @@ app.use('/states', require('./routes/states'));
 
 // Define route handler for the root URL
 app.get('/', (req, res) => {
-    res.sendFile('./views/index.html', { root:__dirname}); 
+    res.sendFile(path.join(__dirname, 'views', 'index.html')); 
 });
 
 // Apply the CORS middleware
