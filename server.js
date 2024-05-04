@@ -16,7 +16,13 @@ app.use('/states', require('./routes/states'));
 
 // Define route handler for the root URL
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html')); 
+    if (req.accepts('html')) {
+        res.sendFile(path.join(__dirname, 'views', 'index.html'));
+    } else if (req.accepts('json')) {
+        res.status(404).json({ "error": "404 Not Found" });
+    } else {
+        res.status(404).type('txt').send("404 Not Found");
+    }
 });
 
 // Apply the CORS middleware
