@@ -11,10 +11,10 @@ router.route('/')
 router.get('/:stateCode', verifyStates, statesController.getState);
 
 // Add the new route for /states/:state/?
-router.get('/:stateCode([A-Za-z]{2})/capital', verifyStates, statesController.getCapital);
-router.get('/:stateCode([A-Za-z]{2})/nickname', verifyStates, statesController.getNickname);
-router.get('/:stateCode([A-Za-z]{2})/population', verifyStates, statesController.getPopulation);
-router.get('/:stateCode([A-Za-z]{2})/admission', verifyStates, statesController.getAdmission);
+router.get('/:stateCode/capital', verifyStates, statesController.getCapital);
+router.get('/:stateCode/nickname', verifyStates, statesController.getNickname);
+router.get('/:stateCode/population', verifyStates, statesController.getPopulation);
+router.get('/:stateCode/admission', verifyStates, statesController.getAdmission);
 router.get('/:stateCode/funfact', verifyStates, statesController.getFunFact);
 
 // Post

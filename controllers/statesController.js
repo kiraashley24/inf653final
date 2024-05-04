@@ -136,7 +136,7 @@ const getPopulation = (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-const getAdmission = (req, res) => {
+const getAdmission = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
         return res.status(400).json({ message: 'State code is required.' });
@@ -147,7 +147,7 @@ const getAdmission = (req, res) => {
         const statesData = require('../model/statesData.json');
         const state = statesData.find(state => state.code.toUpperCase() === stateCode);
         if (!state) {
-            return res.status(404).json({ message: 'State not found.' });
+            return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
         }
         res.json({ state: state.state, admitted: state.admission_date });
     } catch (err) {
@@ -155,6 +155,7 @@ const getAdmission = (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 const getFunFact = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
