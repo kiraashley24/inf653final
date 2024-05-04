@@ -16,11 +16,12 @@ connectDB();
 app.use('/', express.static(path.join(__dirname, '/public')));
 
 // Define route handler for the root URL
-app.use('/', require('./routes/root'));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', 'index.html'));
+});
 
 // Use states routes
 app.use('/states', require('./routes/states'));
-
 
 
 // Apply the CORS middleware
