@@ -4,8 +4,8 @@ const app = express();
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const fs = require('fs');
-const cors = require('cors');
 const path = require('path');
+const cors = require('cors');
 const PORT = process.env.PORT || 3500;
 
 // Connect to MongoDB
@@ -21,6 +21,14 @@ app.get('/', (req, res) => {
 
 // Apply the CORS middleware
 app.use(cors());
+
+app.get('/products/:id', function (req, res, next) {
+    res.json({msg: 'This is CORS-enabled for all origins!'})
+  })
+   
+  app.listen(80, function () {
+    console.log('CORS-enabled web server listening on port 80')
+  })
 
 //404
 app.all('*', (req, res) => {
