@@ -12,15 +12,7 @@ const PORT = process.env.PORT || 3500;
 connectDB();
 
 // Define route handler for the root URL
-app.get('/', (req, res) => {
-    if (req.accepts('html')) {
-        res.sendFile(path.join(__dirname, 'views', 'index.html'));
-    } else if (req.accepts('json')) {
-        res.status(404).json({ "error": "404 Not Found" });
-    } else {
-        res.status(404).type('txt').send("404 Not Found");
-    }
-});
+app.use('/', require('./routes/root'));
 
 // Use states routes
 app.use('/states', require('./routes/states'));
