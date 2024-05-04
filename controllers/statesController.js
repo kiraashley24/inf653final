@@ -66,9 +66,6 @@ const getState = async (req, res) => {
             randomFunfact = stateData.funfacts[randomIndex];
         }
 
-        // Include the random fun fact in the response
-        stateData = { ...stateData.toJSON(), funfact: randomFunfact };
-
         res.json(stateData);
     } catch (err) {
         console.error(err);
