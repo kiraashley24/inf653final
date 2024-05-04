@@ -174,22 +174,23 @@ const getFunFact = async (req, res) => {
         }
         const randomIndex = Math.floor(Math.random() * stateData.funfacts.length);
         const randomFunfact = stateData.funfacts[randomIndex];
-        res.json({ state: stateData.state, funfact: randomFunfact });
+        res.json({ state: stateData.state, funfacts: randomFunfact });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 const updateFunFact = async (req, res) => {
     const { stateCode } = req.params;
-    const { index, funfact } = req.body;
+    const { index, funfacts } = req.body;
     if (!stateCode) {
         return res.status(400).json({ message: 'State code is required.' });
     }
     if (!index) {
         return res.status(400).json({ message: 'State fun fact index value required.' });
     }
-    if (!funfact) {
+    if (!funfacts) {
         return res.status(400).json({ message: 'State fun fact value required.' });
     }
     // Convert stateCode to uppercase
@@ -207,7 +208,7 @@ const updateFunFact = async (req, res) => {
             return res.status(400).json({ message: 'Invalid index provided.' });
         }
         // Update the funfact at the specified index
-        state.funfacts[adjustedIndex] = funfact;
+        state.funfacts[adjustedIndex] = funfacts;
         // Save the updated state
         const updatedState = await state.save();
         // Return the updated state
