@@ -11,6 +11,14 @@ const PORT = process.env.PORT || 3500;
 // Apply the CORS middleware
 app.use(cors());
 
+app.get('/products/:id', function (req, res, next) {
+    res.json({msg: 'This is CORS-enabled for all origins!'})
+  })
+   
+  app.listen(80, function () {
+    console.log('CORS-enabled web server listening on port 80')
+  })
+  
 // Connect to MongoDB
 connectDB();
 
@@ -27,13 +35,7 @@ app.get('/', (req, res) => {
 app.use('/states', require('./routes/states'));
 
 
-app.get('/products/:id', function (req, res, next) {
-    res.json({msg: 'This is CORS-enabled for all origins!'})
-  })
-   
-  app.listen(80, function () {
-    console.log('CORS-enabled web server listening on port 80')
-  })
+
 
 //404
 app.all('*', (req, res) => {
