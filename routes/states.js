@@ -7,9 +7,8 @@ router.route('/')
     .get(statesController.getAllStates)
     .post(statesController.createState);
 
-router.route('/:stateCode')  
-    .get(verifyStates, statesController.getState)
-    
+// GET Route for /states/:stateCode
+router.get('/:stateCode', verifyStates, statesController.getState);
 
 // Add the new route for /states/:state/?
 router.get('/:stateCode([A-Za-z]{2})/capital', verifyStates, statesController.getCapital);
@@ -26,6 +25,5 @@ router.patch('/:stateCode([A-Za-z]{2})/funfact', verifyStates, statesController.
 
 //Delete
 router.delete('/:stateCode/funfact', verifyStates, statesController.deleteFunFact);
-
 
 module.exports = router;
