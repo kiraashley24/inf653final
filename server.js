@@ -26,6 +26,9 @@ app.get('/products/:id', function (req, res, next) {
 // Middleware
 app.use(express.json());
 
+// Use states routes
+app.use('/states', require('./routes/states'));
+
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
 
@@ -34,8 +37,6 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// Use states routes
-app.use('/states', require('./routes/states'));
 
 
 
