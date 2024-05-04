@@ -8,6 +8,9 @@ const path = require('path');
 const cors = require('cors');
 const PORT = process.env.PORT || 3500;
 
+// Apply the CORS middleware
+app.use(cors());
+
 // Connect to MongoDB
 connectDB();
 
@@ -23,8 +26,6 @@ app.get('/', (req, res) => {
 // Use states routes
 app.use('/states', require('./routes/states'));
 
-// Apply the CORS middleware
-app.use(cors());
 
 app.get('/products/:id', function (req, res, next) {
     res.json({msg: 'This is CORS-enabled for all origins!'})
