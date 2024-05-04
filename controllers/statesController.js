@@ -64,6 +64,7 @@ const createState = async (req, res) => {
 const getState = async (req, res) => {
     let { stateCode } = req.params;
 
+    // Check if stateCode exists
     if (!stateCode) {
         return res.status(400).json({ message: 'State code is required.' });
     }
@@ -81,9 +82,10 @@ const getState = async (req, res) => {
 
         let stateFromMongo = await State.findOne({ stateCode }).exec();
 
+        // Merge stateData with stateFromMongo if funfacts exist
         const mergedStateData = {
             ...stateData,
-            ...(stateFromMongo && stateFromMongo.funfacts.length > 0 ? { funfacts: stateFromMongo.funfacts } : {}) // Add funFacts only if they exist
+            ...(stateFromMongo && stateFromMongo.funfacts.length > 0 ? { funfacts: stateFromMongo.funfacts } : {})
         };
 
         res.json(mergedStateData);
@@ -92,6 +94,7 @@ const getState = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 const getCapital = (req, res) => {
     let { stateCode } = req.params;
