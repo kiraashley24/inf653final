@@ -1,4 +1,6 @@
 const State = require('../model/State');
+
+//GET/states/
 const getAllStates = async (req, res) => {
     try {
         const statesData = require('../model/statesData.json');
@@ -20,7 +22,9 @@ const getAllStates = async (req, res) => {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
-}
+};
+
+//POST/states/:state/funfact
 const createState = async (req, res) => {
     if (!req?.body?.stateCode || !req?.body?.funfacts) {
         return res.status(400).json({ 'message': 'State fun facts value required' });
@@ -47,6 +51,7 @@ const createState = async (req, res) => {
     }
 }
 
+//GET/states/:state
 const getState = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
@@ -73,6 +78,7 @@ const getState = async (req, res) => {
     }
 };
 
+//GET/states/:state/capital
 const getCapital = (req, res) => {
     let { stateCode } = req.params;
 
@@ -93,6 +99,8 @@ const getCapital = (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+//GET/states/:state/nickname
 const getNickname = (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
@@ -112,6 +120,8 @@ const getNickname = (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+//GET/states/:state/population
 const getPopulation = (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
@@ -133,6 +143,8 @@ const getPopulation = (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+//GET/states/:state/admission
 const getAdmission = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
@@ -152,7 +164,8 @@ const getAdmission = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-//
+
+//GET/states/:state/funfact
 const getFunFact = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
@@ -178,6 +191,7 @@ const getFunFact = async (req, res) => {
     }
 };
 
+//PATCH/states/:state/funfact
 const updateFunFact = async (req, res) => {
     const { stateCode } = req.params;
     const { index, funfacts } = req.body;
@@ -215,6 +229,8 @@ const updateFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+//DELETE/states/:state/funfact
 const deleteFunFact = async (req, res) => {
     const { stateCode } = req.params;
     const { index } = req.body;
