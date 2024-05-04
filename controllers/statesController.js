@@ -155,7 +155,7 @@ const getAdmission = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-
+//
 const getFunFact = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
