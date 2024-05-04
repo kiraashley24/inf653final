@@ -11,6 +11,10 @@ const PORT = process.env.PORT || 3500;
 // Connect to MongoDB
 connectDB();
 
+
+//serve static files
+app.use('/', express.static(path.join(__dirname, '/public')));
+
 // Define route handler for the root URL
 app.use('/', require('./routes/root'));
 
