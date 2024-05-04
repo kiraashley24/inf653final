@@ -12,14 +12,14 @@ const getAllStates = async (req, res) => {
 
         let states = Object.values(statesData);
 
-        // Filter states based on the 'contig' query parameter
+        // Filter states based on the contig query parameter
         if (contig === 'true') {
             states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
         } else if (contig === 'false') {
             states = states.filter(state => state.code === 'AK' || state.code === 'HI');
         }
 
-        // Send the filtered states as the response
+        // Send the filtered states as response
         res.json(states);
     } catch (err) {
         console.error(err);
@@ -50,11 +50,11 @@ const createState = async (req, res) => {
             await state.save();
         }
 
-        console.log('Created state:', state); // Log the created state
+        console.log('Created state:', state); // Log created state
 
         res.status(201).json(state);
     } catch (err) {
-        console.error(err); // Log the error
+        console.error(err); // Log error
         res.status(500).json({ 'message': 'Internal server error' });
     }
 }
