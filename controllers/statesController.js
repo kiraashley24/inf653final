@@ -111,12 +111,20 @@ const getCapital = (req, res) => {
             return res.status(404).json({ message: 'State not found.' });
         }
 
+        // Check if the state code is a valid abbreviation
+        const isValidStateCode = /[A-Z]{2}/.test(stateCode);
+
+        if (!isValidStateCode) {
+            return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
+        }
+
         res.json({ state: state.state, capital: state.capital_city });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 const getNickname = (req, res) => {
     let { stateCode } = req.params;
 
