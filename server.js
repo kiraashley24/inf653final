@@ -6,6 +6,7 @@ const connectDB = require('./config/dbConn');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3500;
 
 
@@ -44,6 +45,10 @@ app.all('*', (req, res) => {
 });
 // Middleware
 app.use(express.json());
+
+//middleware body parser
+app.use(bodyParser());
+
 // Read the JSON file
 fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
     if (err) {
