@@ -6,7 +6,6 @@ const connectDB = require('./config/dbConn');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
-const PORT = process.env.PORT || 3500;
 
 // Connect to MongoDB
 connectDB();
@@ -14,8 +13,9 @@ connectDB();
 // Apply the CORS middleware
 app.use(cors());
 
-//serve static files
+// Serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
+
 // Define route handler for the root URL
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
@@ -27,14 +27,7 @@ app.use(express.json());
 // Use states routes
 app.use('/states', require('./routes/states'));
 
-app.get('/products/:id', function (req, res, next) {
-    res.json({msg: 'This is CORS-enabled for all origins!'})
-  });
-   
-  app.listen(80, function () {
-    console.log('CORS-enabled web server listening on port 80')
-  });
-//404
+// Default route for handling 404 errors
 app.all('*', (req, res) => {
     res.status(404);
     if (req.accepts('html')) {
@@ -46,6 +39,11 @@ app.all('*', (req, res) => {
     }
 });
 
+// Start the server
+const PORT = process.env.PORT || 3500;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 // Read the JSON file
 fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
@@ -54,16 +52,13 @@ fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
         return;
     }
     try {
-        // Parse the JSON data into a JavaScript object
         const statesData = JSON.parse(data);
-        //use the statesData object in application
         console.log(statesData);
     } catch (err) {
         console.error('Error parsing JSON:', err);
     }
 });
-// Start the server
+
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 });
