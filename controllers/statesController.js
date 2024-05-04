@@ -74,7 +74,7 @@ const getState = async (req, res) => {
 
 
 
-//GET/states/:state/capital
+///GET/states/:state/capital
 const getCapital = (req, res) => {
     let { stateCode } = req.params;
 
