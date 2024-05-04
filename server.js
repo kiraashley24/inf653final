@@ -1,11 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+const path = require('path');
+const cors = require('cors');
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const fs = require('fs');
-const path = require('path');
-const cors = require('cors');
 const PORT = process.env.PORT || 3500;
 
 // Connect to MongoDB
@@ -29,8 +29,7 @@ app.use(express.json());
 // Use states routes
 app.use('/states', require('./routes/states'));
 
-//serve static files
-app.use('/', express.static(path.join(__dirname, '/public')));
+
 
 // Define route handler for the root URL
 app.get('/', (req, res) => {
