@@ -24,10 +24,9 @@ app.get('/products/:id', function (req, res, next) {
 
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
-// Define route handler for the root URL
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'index.html'));
-});
+
+// root URL
+app.use('/', require('./routes/root'));
 
 // Middleware
 app.use(express.json());
