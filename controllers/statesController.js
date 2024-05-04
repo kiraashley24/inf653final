@@ -10,12 +10,29 @@ const getAllStates = async (req, res) => {
             return res.status(204).json({ 'message': 'No states found.' });
         }
         let states = Object.values(statesData);
+
+        // Fetch all states data from MongoDB
+        const mongoStates = await State.find().exec();
+
+        // Merge fun facts from MongoDB with states data
+        states = states.map(state => {
+            const mongoState = mongoStates.find(s => s.stateCode === state.code);
+            if (mongoState) {
+                return {
+                    ...state,
+                    funfacts: mongoState.funfacts
+                };
+            }
+            return state;
+        });
+
         // Filter states based on the contig query parameter
         if (contig === 'true') {
             states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
         } else if (contig === 'false') {
             states = states.filter(state => state.code === 'AK' || state.code === 'HI');
         }
+
         // Send the filtered states as response
         res.json(states);
     } catch (err) {
@@ -23,6 +40,7 @@ const getAllStates = async (req, res) => {
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
 
 //POST/states/:state/funfact
 const createState = async (req, res) => {
