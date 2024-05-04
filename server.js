@@ -8,6 +8,9 @@ const path = require('path');
 const cors = require('cors');
 const PORT = process.env.PORT || 3500;
 
+// Connect to MongoDB
+connectDB();
+
 // Apply the CORS middleware
 app.use(cors());
 
@@ -19,8 +22,7 @@ app.get('/products/:id', function (req, res, next) {
     console.log('CORS-enabled web server listening on port 80')
   })
   
-// Connect to MongoDB
-connectDB();
+
 // Middleware
 app.use(express.json());
 
