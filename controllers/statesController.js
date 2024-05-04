@@ -20,7 +20,7 @@ const getAllStates = async (req, res) => {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
-};
+}
 const createState = async (req, res) => {
     if (!req?.body?.stateCode || !req?.body?.funfacts) {
         return res.status(400).json({ 'message': 'State fun facts value required' });
@@ -45,7 +45,7 @@ const createState = async (req, res) => {
         console.error(err); // Log error
         res.status(500).json({ 'message': 'Internal server error' });
     }
-};
+}
 
 const getState = async (req, res) => {
     let { stateCode } = req.params;
@@ -55,23 +55,27 @@ const getState = async (req, res) => {
     // Convert stateCode to uppercase
     stateCode = stateCode.toUpperCase();
     try {
-        const statesData = require('../model/statesData.json');
-        const stateData = statesData.find(state => state.code.toUpperCase() === stateCode);
+        let stateData = await State.findOne({ stateCode }).exec();
         if (!stateData) {
             return res.status(404).json({ message: 'State not found.' });
         }
 
-        let stateFromMongo = await State.findOne({ stateCode }).exec();
-        const mergedStateData = {
-            ...stateData,
-        };
+        let randomFunfact = null;
+        if (stateData.funfacts && stateData.funfacts.length > 0) {
+            const randomIndex = Math.floor(Math.random() * stateData.funfacts.length);
+            randomFunfact = stateData.funfacts[randomIndex];
+        }
 
-        res.json(mergedStateData);
+        // Include the random fun fact in the response
+        stateData = { ...stateData.toJSON(), funfact: randomFunfact };
+
+        res.json(stateData);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 const getCapital = (req, res) => {
     let { stateCode } = req.params;
 
