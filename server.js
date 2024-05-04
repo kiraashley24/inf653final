@@ -11,9 +11,6 @@ const PORT = process.env.PORT || 3500;
 // Connect to MongoDB
 connectDB();
 
-// Use states routes
-app.use('/states', require('./routes/states'));
-
 // Define route handler for the root URL
 app.get('/', (req, res) => {
     if (req.accepts('html')) {
@@ -24,6 +21,11 @@ app.get('/', (req, res) => {
         res.status(404).type('txt').send("404 Not Found");
     }
 });
+
+// Use states routes
+app.use('/states', require('./routes/states'));
+
+
 
 // Apply the CORS middleware
 app.use(cors());
