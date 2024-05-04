@@ -1,5 +1,3 @@
-// server.js
-
 require('dotenv').config();
 const express = require('express');
 const app = express();
@@ -7,7 +5,6 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const fs = require('fs');
 const cors = require('cors');
-
 const PORT = process.env.PORT || 3500;
 
 // Connect to MongoDB
@@ -15,8 +12,9 @@ connectDB();
 
 // Define route handler for the root URL
 app.get('/', (req, res) => {
-    res.sendFile('./views/index.html', { root:__dirname}); // Send a response to the client
+    res.sendFile('./views/index.html', { root:__dirname}); 
 });
+
 // Apply the CORS middleware
 app.use(cors());
 
@@ -34,10 +32,6 @@ app.all('*', (req, res) => {
 
 // Middleware
 app.use(express.json());
-/*
-app.get('/*', (req, res) => {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-})*/
 
 // Read the JSON file
 fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
@@ -50,7 +44,7 @@ fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
         // Parse the JSON data into a JavaScript object
         const statesData = JSON.parse(data);
 
-        // Now you can use the statesData object in your application
+        //use the statesData object in application
         console.log(statesData);
     } catch (err) {
         console.error('Error parsing JSON:', err);

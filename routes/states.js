@@ -7,12 +7,11 @@ router.route('/')
     .get(statesController.getAllStates)
     .post(statesController.createState);
 
-router.route('/:stateCode')  // Use stateCode instead of state
+router.route('/:stateCode')  
     .get(verifyStates, statesController.getState)
     
-   
 
-// Add the new route for /states/:state/capital
+// Add the new route for /states/:state/?
 router.get('/:stateCode([A-Za-z]{2})/capital', verifyStates, statesController.getCapital);
 router.get('/:stateCode([A-Za-z]{2})/nickname', verifyStates, statesController.getNickname);
 router.get('/:stateCode([A-Za-z]{2})/population', verifyStates, statesController.getPopulation);
