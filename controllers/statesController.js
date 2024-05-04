@@ -51,32 +51,28 @@ const createState = async (req, res) => {
     }
 }
 
-//GET/states/:state
+// GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
         return res.status(400).json({ message: 'State code is required.' });
     }
     // Convert stateCode to uppercase
-    stateCode = stateCode.toUpperCase();
+    stateCode = stateCode.toUpperCase();  // or stateCode.toLowerCase();
     try {
-        let stateData = await State.findOne({ stateCode }).exec();
-        if (!stateData) {
+        const statesData = require('../model/statesData.json');
+        const state = statesData.find(state => state.code.toUpperCase() === stateCode);
+        if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
-
-        let randomFunfact = null;
-        if (stateData.funfacts && stateData.funfacts.length > 0) {
-            const randomIndex = Math.floor(Math.random() * stateData.funfacts.length);
-            randomFunfact = stateData.funfacts[randomIndex];
-        }
-
-        res.json(stateData);
+        res.json(state);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+
 
 //GET/states/:state/capital
 const getCapital = (req, res) => {
