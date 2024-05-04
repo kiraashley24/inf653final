@@ -20,7 +20,7 @@ const getAllStates = async (req, res) => {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
-}
+};
 const createState = async (req, res) => {
     if (!req?.body?.stateCode || !req?.body?.funfacts) {
         return res.status(400).json({ 'message': 'State fun facts value required' });
@@ -45,7 +45,7 @@ const createState = async (req, res) => {
         console.error(err); // Log error
         res.status(500).json({ 'message': 'Internal server error' });
     }
-}
+};
 
 const getState = async (req, res) => {
     let { stateCode } = req.params;
