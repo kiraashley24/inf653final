@@ -61,24 +61,16 @@ const getState = async (req, res) => {
     stateCode = stateCode.toUpperCase();  // or stateCode.toLowerCase();
     try {
         const statesData = require('../model/statesData.json');
-        let state = statesData.find(state => state.code.toUpperCase() === stateCode);
+        const state = statesData.find(state => state.code.toUpperCase() === stateCode);
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
-        
-        // Query MongoDB for stateData with funfacts
-        let stateData = await State.findOne({ stateCode }).exec();
-        if (stateData && stateData.funfacts && stateData.funfacts.length > 0) {
-            state = { ...state, funfacts: stateData.funfacts };
-        }
-        
         res.json(state);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-
 
 
 
