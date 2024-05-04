@@ -23,7 +23,6 @@ app.get('/', (req, res) => {
 // Use states routes
 app.use('/states', require('./routes/states'));
 
-
 // Apply the CORS middleware
 app.use(cors());
 
