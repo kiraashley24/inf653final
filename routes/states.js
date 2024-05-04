@@ -21,7 +21,7 @@ router.get('/:stateCode/funfact', verifyStates, statesController.getFunFact);
 router.post('/:stateCode/funfact', verifyStates, statesController.createState);
 
 //Patch
-router.patch('/:stateCode([A-Za-z]{2})/funfact', verifyStates, statesController.updateFunFact);
+router.patch('/:stateCode/funfact', verifyStates, statesController.updateFunFact);
 
 //Delete
 router.delete('/:stateCode/funfact', verifyStates, statesController.deleteFunFact);
