@@ -6,15 +6,13 @@ const connectDB = require('./config/dbConn');
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3500;
-
-
-// Apply the CORS middleware
-app.use(cors());
 
 // Connect to MongoDB
 connectDB();
+
+// Apply the CORS middleware
+app.use(cors());
 
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
@@ -22,6 +20,10 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
+
+// Middleware
+app.use(express.json());
+
 // Use states routes
 app.use('/states', require('./routes/states'));
 
@@ -43,11 +45,7 @@ app.all('*', (req, res) => {
         res.type('txt').send("404 Not Found");
     }
 });
-// Middleware
-app.use(express.json());
 
-//middleware body parser
-app.use(bodyParser());
 
 // Read the JSON file
 fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
