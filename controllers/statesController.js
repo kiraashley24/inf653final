@@ -49,7 +49,7 @@ const createState = async (req, res) => {
         console.error(err); // Log error
         res.status(500).json({ 'message': 'Internal server error' });
     }
-}
+};
 
 // GET /states/:stateCode
 const getState = async (req, res) => {
@@ -71,7 +71,6 @@ const getState = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-
 
 
 ///GET/states/:state/capital
