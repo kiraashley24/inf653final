@@ -5,10 +5,14 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const fs = require('fs');
 const cors = require('cors');
+const path = require('path');
 const PORT = process.env.PORT || 3500;
 
 // Connect to MongoDB
 connectDB();
+
+// Use states routes
+app.use('/states', require('./routes/states'));
 
 // Define route handler for the root URL
 app.get('/', (req, res) => {
@@ -51,8 +55,7 @@ fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
     }
 });
 
-// Use states routes
-app.use('/states', require('./routes/states'));
+
 
 // Start the server
 mongoose.connection.once('open', () => {
