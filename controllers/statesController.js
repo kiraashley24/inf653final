@@ -1,28 +1,17 @@
 const State = require('../model/State');
 
-//GET/states/
+// GET /states/
 const getAllStates = async (req, res) => {
     try {
         const statesData = require('../model/statesData.json');
-        const { contig } = req.query;
-        // Check if the statesData object exists and is not empty
-        if (!statesData || Object.keys(statesData).length === 0) {
-            return res.status(204).json({ 'message': 'No states found.' });
-        }
-        let states = Object.values(statesData);
-        // Filter states based on the contig query parameter
-        if (contig === 'true') {
-            states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
-        } else if (contig === 'false') {
-            states = states.filter(state => state.code === 'AK' || state.code === 'HI');
-        }
-        // Send the filtered states as response
-        res.json(states);
+
+        res.json(statesData);
     } catch (err) {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
 
 // GET /states/:stateCode
 const getState = async (req, res) => {
@@ -31,19 +20,30 @@ const getState = async (req, res) => {
         return res.status(400).json({ message: 'State code is required.' });
     }
     // Convert stateCode to uppercase
-    stateCode = stateCode.toUpperCase();  // or stateCode.toLowerCase();
+    stateCode = stateCode.toUpperCase();  
+
     try {
         const statesData = require('../model/statesData.json');
         const state = statesData.find(state => state.code.toUpperCase() === stateCode);
+
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
+
+        // Assuming your State model has a method to find by state code
+        const stateWithFunFacts = await State.findOne({ stateCode }).exec();
+
+        if (stateWithFunFacts && stateWithFunFacts.funfacts && stateWithFunFacts.funfacts.length > 0) {
+            state.funfacts = stateWithFunFacts.funfacts;
+        }
+
         res.json(state);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 
 ///GET/states/:state/capital
