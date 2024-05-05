@@ -12,8 +12,6 @@ const getAllStates = async (req, res) => {
     }
 };
 
-
-// GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
@@ -35,6 +33,8 @@ const getState = async (req, res) => {
 
         if (stateWithFunFacts && stateWithFunFacts.funfacts && stateWithFunFacts.funfacts.length > 0) {
             state.funfacts = stateWithFunFacts.funfacts;
+        } else {
+            state.funfacts = []; // Empty array if no fun facts found
         }
 
         res.json(state);
@@ -43,7 +43,6 @@ const getState = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-
 
 
 ///GET/states/:state/capital
