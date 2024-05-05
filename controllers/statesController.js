@@ -1,6 +1,6 @@
 const State = require('../model/State');
 
-//GET/states/
+// GET /states
 const getAllStates = async (req, res) => {
     try {
         const statesData = require('../model/statesData.json');
@@ -16,37 +16,27 @@ const getAllStates = async (req, res) => {
         } else if (contig === 'false') {
             states = states.filter(state => state.code === 'AK' || state.code === 'HI');
         }
+
+        // Query MongoDB for funfacts
+        const stateCodes = states.map(state => state.code);
+        const funFacts = await State.find({ stateCode: { $in: stateCodes }, funfacts: { $exists: true, $ne: [] } }).exec();
+        const funFactsMap = funFacts.reduce((acc, cur) => {
+            acc[cur.stateCode] = cur.funfacts;
+            return acc;
+        }, {});
+
+        // Merge funfacts into states data
+        states = states.map(state => {
+            return {
+                ...state,
+                funfacts: funFactsMap[state.code] || []
+            };
+        });
+
         // Send the filtered states as response
         res.json(states);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ 'message': 'Internal server error' });
-    }
-};
-
-//POST/states/:state/funfact
-const createState = async (req, res) => {
-    if (!req?.body?.stateCode || !req?.body?.funfacts) {
-        return res.status(400).json({ 'message': 'State fun facts value required' });
-    }
-    if (!Array.isArray(req.body.funfacts)) {
-        return res.status(400).json({ 'message': 'Fun facts should be provided as an array' });
-    }
-    try {
-        let state = await State.findOne({ stateCode: req.body.stateCode }).exec();
-        if (!state) {
-            state = await State.create({
-                stateCode: req.body.stateCode,
-                funfacts: req.body.funfacts
-            });
-        } else {
-            state.funfacts = [...state.funfacts, ...req.body.funfacts];
-            await state.save();
-        }
-        console.log('Created state:', state); // Log created state
-        res.status(201).json(state);
-    } catch (err) {
-        console.error(err); // Log error
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
@@ -65,12 +55,24 @@ const getState = async (req, res) => {
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
-        res.json(state);
+
+        // Query MongoDB for funfacts
+        const stateData = await State.findOne({ stateCode }).exec();
+        const funfacts = stateData ? stateData.funfacts : [];
+
+        // Merge funfacts into state data
+        const stateWithFunFacts = {
+            ...state,
+            funfacts
+        };
+
+        res.json(stateWithFunFacts);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 
 ///GET/states/:state/capital
@@ -185,6 +187,34 @@ const getFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+//POST/states/:state/funfact
+const createState = async (req, res) => {
+    if (!req?.body?.stateCode || !req?.body?.funfacts) {
+        return res.status(400).json({ 'message': 'State fun facts value required' });
+    }
+    if (!Array.isArray(req.body.funfacts)) {
+        return res.status(400).json({ 'message': 'Fun facts should be provided as an array' });
+    }
+    try {
+        let state = await State.findOne({ stateCode: req.body.stateCode }).exec();
+        if (!state) {
+            state = await State.create({
+                stateCode: req.body.stateCode,
+                funfacts: req.body.funfacts
+            });
+        } else {
+            state.funfacts = [...state.funfacts, ...req.body.funfacts];
+            await state.save();
+        }
+        console.log('Created state:', state); // Log created state
+        res.status(201).json(state);
+    } catch (err) {
+        console.error(err); // Log error
+        res.status(500).json({ 'message': 'Internal server error' });
+    }
+};
+
 
 //PATCH/states/:state/funfact
 const updateFunFact = async (req, res) => {
