@@ -1,45 +1,40 @@
 const State = require('../model/State');
 
-// GET /states
+// GET /states/
 const getAllStates = async (req, res) => {
     try {
+        // Load statesData from JSON file
         const statesData = require('../model/statesData.json');
-        const { contig } = req.query;
-        // Check if the statesData object exists and is not empty
-        if (!statesData || Object.keys(statesData).length === 0) {
-            return res.status(204).json({ 'message': 'No states found.' });
-        }
-        let states = Object.values(statesData);
+        
+        // Get all states with funfacts from MongoDB
+        const statesWithFunFacts = await State.find({ funfacts: { $exists: true, $ne: [] } }).exec();
+
+        // Merge funfacts from MongoDB with statesData
+        const states = statesData.map(state => {
+            const stateWithFunFacts = statesWithFunFacts.find(s => s.stateCode === state.code);
+            if (stateWithFunFacts) {
+                return { ...state, funfacts: stateWithFunFacts.funfacts };
+            } else {
+                return state;
+            }
+        });
+
         // Filter states based on the contig query parameter
+        const { contig } = req.query;
         if (contig === 'true') {
             states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
         } else if (contig === 'false') {
             states = states.filter(state => state.code === 'AK' || state.code === 'HI');
         }
 
-        // Query MongoDB for funfacts
-        const stateCodes = states.map(state => state.code);
-        const funFacts = await State.find({ stateCode: { $in: stateCodes }, funfacts: { $exists: true, $ne: [] } }).exec();
-        const funFactsMap = funFacts.reduce((acc, cur) => {
-            acc[cur.stateCode] = cur.funfacts;
-            return acc;
-        }, {});
-
-        // Merge funfacts into states data
-        states = states.map(state => {
-            return {
-                ...state,
-                funfacts: funFactsMap[state.code] || []
-            };
-        });
-
-        // Send the filtered states as response
+        // Send the merged states as response
         res.json(states);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ 'message': 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 // GET /states/:stateCode
 const getState = async (req, res) => {
@@ -48,25 +43,13 @@ const getState = async (req, res) => {
         return res.status(400).json({ message: 'State code is required.' });
     }
     // Convert stateCode to uppercase
-    stateCode = stateCode.toUpperCase();  // or stateCode.toLowerCase();
+    stateCode = stateCode.toUpperCase();
     try {
-        const statesData = require('../model/statesData.json');
-        const state = statesData.find(state => state.code.toUpperCase() === stateCode);
+        const state = await State.findOne({ stateCode }).exec();
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
-
-        // Query MongoDB for funfacts
-        const stateData = await State.findOne({ stateCode }).exec();
-        const funfacts = stateData ? stateData.funfacts : [];
-
-        // Merge funfacts into state data
-        const stateWithFunFacts = {
-            ...state,
-            funfacts
-        };
-
-        res.json(stateWithFunFacts);
+        res.json(state);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
