@@ -24,7 +24,6 @@ const getAllStates = async (req, res) => {
     }
 };
 
-// GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
@@ -38,12 +37,23 @@ const getState = async (req, res) => {
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
+
+        // Assuming your State model has a method to find by state code
+        const stateWithFunFacts = await State.findOne({ stateCode }).exec();
+
+        if (stateWithFunFacts && stateWithFunFacts.funfacts && stateWithFunFacts.funfacts.length > 0) {
+            state.funfacts = stateWithFunFacts.funfacts;
+        } else {
+            state.funfacts = []; // Empty array if no fun facts found
+        }
+
         res.json(state);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 
 ///GET/states/:state/capital
@@ -152,7 +162,7 @@ const getFunFact = async (req, res) => {
         }
         const randomIndex = Math.floor(Math.random() * stateData.funfacts.length);
         const randomFunfact = stateData.funfacts[randomIndex];
-        res.json({ state: stateData.state, funfacts: randomFunfact });
+        res.json({ state: stateData.state, funfact: randomFunfact });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
