@@ -10,7 +10,7 @@ const getAllStates = async (req, res) => {
         const statesWithFunFacts = await State.find({ funfacts: { $exists: true, $ne: [] } }).exec();
 
         // Merge funfacts from MongoDB with statesData
-        const states = statesData.map(state => {
+        let states = statesData.map(state => {
             const stateWithFunFacts = statesWithFunFacts.find(s => s.stateCode === state.code);
             if (stateWithFunFacts) {
                 return { ...state, funfacts: stateWithFunFacts.funfacts };
@@ -28,12 +28,13 @@ const getAllStates = async (req, res) => {
         }
 
         // Send the merged states as response
-        res.json(states);
+        res.status(200).json(states);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 
 // GET /states/:stateCode
