@@ -4,8 +4,20 @@ const State = require('../model/State');
 const getAllStates = async (req, res) => {
     try {
         const statesData = require('../model/statesData.json');
-
-        res.json(statesData);
+        const { contig } = req.query;
+        // Check if the statesData object exists and is not empty
+        if (!statesData || Object.keys(statesData).length === 0) {
+            return res.status(204).json({ 'message': 'No states found.' });
+        }
+        let states = Object.values(statesData);
+        // Filter states based on the contig query parameter
+        if (contig === 'true') {
+            states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
+        } else if (contig === 'false') {
+            states = states.filter(state => state.code === 'AK' || state.code === 'HI');
+        }
+        // Send the filtered states as response
+        res.json(states);
     } catch (err) {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
