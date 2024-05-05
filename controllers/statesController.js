@@ -35,8 +35,6 @@ const getAllStates = async (req, res) => {
     }
 };
 
-
-
 // GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
@@ -46,10 +44,16 @@ const getState = async (req, res) => {
     // Convert stateCode to uppercase
     stateCode = stateCode.toUpperCase();
     try {
-        const state = await State.findOne({ stateCode }).exec();
+        // Load statesData from JSON file
+        const statesData = require('../model/statesData.json');
+        
+        // Find state in statesData
+        const state = statesData.find(state => state.code === stateCode);
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
+
+        // Send state as response
         res.json(state);
     } catch (err) {
         console.error(err);
