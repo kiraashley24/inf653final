@@ -31,22 +31,13 @@ const getState = async (req, res) => {
         return res.status(400).json({ message: 'State code is required.' });
     }
     // Convert stateCode to uppercase
-    stateCode = stateCode.toUpperCase();  
-
+    stateCode = stateCode.toUpperCase();  // or stateCode.toLowerCase();
     try {
         const statesData = require('../model/statesData.json');
         const state = statesData.find(state => state.code.toUpperCase() === stateCode);
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
-
-        // Assuming your State model has a method to find by state code
-        const stateWithFunFacts = await State.findOne({ stateCode }).exec();
-
-        if (stateWithFunFacts && stateWithFunFacts.funfacts && stateWithFunFacts.funfacts.length > 0) {
-            state.funfacts = stateWithFunFacts.funfacts;
-        }
-
         res.json(state);
     } catch (err) {
         console.error(err);
