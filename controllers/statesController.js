@@ -1,28 +1,31 @@
 const State = require('../model/State');
 
-//GET/states/
+// GET /states/
 const getAllStates = async (req, res) => {
     try {
         const statesData = require('../model/statesData.json');
-        const { contig } = req.query;
-        // Check if the statesData object exists and is not empty
-        if (!statesData || Object.keys(statesData).length === 0) {
-            return res.status(204).json({ 'message': 'No states found.' });
-        }
-        let states = Object.values(statesData);
-        // Filter states based on the contig query parameter
-        if (contig === 'true') {
-            states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
-        } else if (contig === 'false') {
-            states = states.filter(state => state.code === 'AK' || state.code === 'HI');
-        }
-        // Send the filtered states as response
-        res.json(states);
+
+        // Get all states with funfacts from MongoDB
+        const statesWithFunFacts = await State.find({ funfacts: { $exists: true, $ne: [] } }).exec();
+
+        // Merge funfacts from MongoDB with statesData
+        let states = statesData.map(state => {
+            const stateWithFunFacts = statesWithFunFacts.find(s => s.stateCode === state.code);
+            if (stateWithFunFacts) {
+                return { ...state, funfacts: stateWithFunFacts.funfacts };
+            } else {
+                return state;
+            }
+        });
+
+        // Send the merged states as response
+        res.status(200).json(states);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ 'message': 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 // GET /states/:stateCode
 const getState = async (req, res) => {
@@ -160,32 +163,32 @@ const getFunFact = async (req, res) => {
     }
 };
 
-//POST/states/:state/funfact
+// POST /states/:state/funfact
 const createState = async (req, res) => {
-    if (!req?.body?.stateCode || !req?.body?.funfacts) {
-        return res.status(400).json({ 'message': 'State fun facts value required' });
-    }
-    if (!Array.isArray(req.body.funfacts)) {
+    const { state } = req.params;
+    if (!req?.body?.funfacts || !Array.isArray(req.body.funfacts)) {
         return res.status(400).json({ 'message': 'Fun facts should be provided as an array' });
     }
     try {
-        let state = await State.findOne({ stateCode: req.body.stateCode }).exec();
-        if (!state) {
-            state = await State.create({
-                stateCode: req.body.stateCode,
+        let existingState = await State.findOne({ stateCode: state }).exec();
+        if (!existingState) {
+            existingState = await State.create({
+                stateCode: state,
                 funfacts: req.body.funfacts
             });
         } else {
-            state.funfacts = [...state.funfacts, ...req.body.funfacts];
-            await state.save();
+            existingState.funfacts = [...existingState.funfacts, ...req.body.funfacts];
+            await existingState.save();
         }
-        console.log('Created state:', state); // Log created state
-        res.status(201).json(state);
+        console.log('Updated state:', existingState); // Log updated state
+        res.status(201).json(existingState);
     } catch (err) {
         console.error(err); // Log error
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
+
 
 
 //PATCH/states/:state/funfact
