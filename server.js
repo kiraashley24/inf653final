@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const fs = require('fs');
 const path = require('path');
-const PORT = process.env.PORT || 3500;
+const PORT = process.env.PORT || 7000;
 
 // Connect to MongoDB
 connectDB();

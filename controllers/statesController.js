@@ -169,28 +169,31 @@ const getFunFact = async (req, res) => {
 
 // POST /states/:state/funfact
 const createState = async (req, res) => {
-    const { state } = req.params;
-    if (!req?.body?.funfacts || !Array.isArray(req.body.funfacts)) {
+    if (!req?.body?.stateCode || !req?.body?.funfacts) {
+        return res.status(400).json({ 'message': 'State fun facts value required' });
+    }
+    if (!Array.isArray(req.body.funfacts)) {
         return res.status(400).json({ 'message': 'Fun facts should be provided as an array' });
     }
     try {
-        let existingState = await State.findOne({ stateCode: state }).exec();
-        if (!existingState) {
-            existingState = await State.create({
-                stateCode: state,
+        let state = await State.findOne({ stateCode: req.body.stateCode }).exec();
+        if (!state) {
+            state = await State.create({
+                stateCode: req.body.stateCode,
                 funfacts: req.body.funfacts
             });
         } else {
-            existingState.funfacts = [...existingState.funfacts, ...req.body.funfacts];
-            await existingState.save();
+            state.funfacts = [...state.funfacts, ...req.body.funfacts];
+            await state.save();
         }
-        console.log('Updated state:', existingState); // Log updated state
-        res.status(201).json(existingState);
+        console.log('Created state:', state); // Log created state
+        res.status(201).json(state);
     } catch (err) {
         console.error(err); // Log error
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
 
 
 
