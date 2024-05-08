@@ -8,8 +8,7 @@ const stateSchema = new Schema({
         unique: true
     },
     funfacts: {
-        type: [String],
-        default: []
+        type: [String]
     }
 });
 
@@ -34,9 +33,9 @@ module.exports = mongoose.model('State', stateSchema);
     
 }
 
-PATCH : {
-    "index": 4,
-    "funfact": "GO AVS"
-}
+PATCH :   {
+      "index": "4",
+      "funfact": ["1st fun fact updated."]
+    }
 
 */
