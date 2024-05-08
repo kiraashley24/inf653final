@@ -13,10 +13,10 @@ const verifyStates = async (req, res, next) => {
         const stateCodes = statesData.map(state => state.code.toUpperCase());
 
         // Check if stateCode is valid
-        if (!stateCodes.includes(stateCode)) {
+        const isValidStateCode = stateCodes.find(code => code === stateCode);
+        if (!isValidStateCode) {
             return res.status(404).json({ message: 'Invalid state abbreviation parameter' });
         }
-
         // Attach the stateCode to the request object
         req.stateCode = stateCode;
 
