@@ -19,13 +19,6 @@ const getAllStates = async (req, res) => {
             }
         });
 
-        // Filter states based on the contig query parameter
-        if (contig === 'true') {
-            states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
-        } else if (contig === 'false') {
-            states = states.filter(state => state.code === 'AK' || state.code === 'HI');
-        }
-
         // Send the filtered and merged states as response
         res.json(states);
     } catch (err) {
