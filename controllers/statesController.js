@@ -54,7 +54,7 @@ const getState = async (req, res) => {
         }
 
         // Query MongoDB for funfacts
-        const dbStates = await State.find().exec();
+        const dbStates = await State.find( {stateCode}).exec();
 
         // Iterate through JSON data
         const funfactsArray = [];
@@ -210,12 +210,16 @@ const createState = async (req, res) => {
             await state.save();
         }
         console.log('Created state:', state); // Log created state
-        res.status(201).json(state);
+
+        // Retrieve the updated state from the database to ensure correct order
+        const updatedState = await State.findById(state._id).exec();
+        res.status(201).json(updatedState);
     } catch (err) {
         console.error(err); // Log error
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
 
 
 //PATCH/states/:state/funfact
