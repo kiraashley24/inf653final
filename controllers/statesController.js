@@ -1,38 +1,30 @@
 const State = require('../model/State');
+const fs = require('fs');
 
 // GET /states/
 const getAllStates = async (req, res) => {
     try {
-        // Load statesData.json
-        const statesData = require('../model/statesData.json');
-        const { contig } = req.query;
+        // Read the JSON file
+        const statesData = JSON.parse(fs.readFileSync('./model/statesData.json', 'utf8'));
 
-        // Fetch all document data from MongoDB collection
-        const mongoStates = await State.find().exec();
+        // Fetch data from MongoDB
+        const statesWithFunFacts = await State.find({});
 
-        // Iterate through statesData.json and merge with MongoDB data
-        let states = Object.values(statesData);
-        states.forEach(state => {
-            const matchedState = mongoStates.find(mongoState => mongoState.stateCode === state.code);
-            if (matchedState) {
-                state.funfacts = matchedState.funfacts;
+        // Merge data from MongoDB into statesData.json
+        statesData.forEach(state => {
+            const matchingState = statesWithFunFacts.find(s => s.stateCode === state.code);
+            if (matchingState) {
+                state.funfacts = matchingState.funfacts;
             }
         });
 
-        // Filter states based on the contig query parameter
-        if (contig === 'true') {
-            states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
-        } else if (contig === 'false') {
-            states = states.filter(state => state.code === 'AK' || state.code === 'HI');
-        }
-
-        // Send the filtered and merged states as response
-        res.json(states);
+        res.json(statesData);
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ 'message': 'Internal server error' });
+        console.error('Error fetching and merging state data:', err);
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 // GET /states/:stateCode
