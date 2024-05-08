@@ -14,14 +14,16 @@ connectDB();
 // Apply the CORS middleware
 app.use(cors());
 
+// Middleware
+app.use(express.json());
+
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
 
 // root URL
 app.use('/', require('./routes/root'));
 
-// Middleware
-app.use(express.json());
+
 
 // Use states routes
 app.use('/states', require('./routes/states'));
