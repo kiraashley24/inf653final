@@ -27,28 +27,42 @@ const getAllStates = async (req, res) => {
 
 
 // GET /states/:stateCode
-
 const getState = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
         return res.status(400).json({ message: 'State code is required.' });
     }
+
     // Convert stateCode to uppercase
-    stateCode = stateCode.toUpperCase();  
+    stateCode = stateCode.toUpperCase();
+
     try {
+        // Fetch state data from statesData.json
         const statesData = require('../model/statesData.json');
         const state = statesData.find(state => state.code.toUpperCase() === stateCode);
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
 
-        // Send state as response
-        res.json(state);
+        // Query MongoDB for funfacts
+        const dbState = await State.findOne({ stateCode }).exec();
+        if (!dbState) {
+            return res.status(404).json({ message: 'State not found in database.' });
+        }
+
+        // Combine the data
+        const combinedStateData = { ...state, funfacts: dbState.funfacts };
+
+        // Send the combined state data as the response
+        res.json(combinedStateData);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+
+
 
 
 
