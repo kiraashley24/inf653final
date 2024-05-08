@@ -27,8 +27,6 @@ const getAllStates = async (req, res) => {
 };
 
 
-
-
 // GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
@@ -190,7 +188,7 @@ const createState = async (req, res) => {
         return res.status(400).json({ 'message': 'State fun facts value required' });
     }
     if (!Array.isArray(req.body.funfacts)) {
-        return res.status(400).json({ 'message': 'Fun facts should be provided as an array' });
+        return res.status(400).json({ 'message': 'State fun facts value must be an array' });
     }
     try {
         let state = await State.findOne({ stateCode: req.body.stateCode }).exec();
