@@ -10,14 +10,30 @@ const getAllStates = async (req, res) => {
         // Fetch all document data from MongoDB collection
         const mongoStates = await State.find().exec();
 
-        // Iterate through statesData.json and merge with MongoDB data
-        let states = Object.values(statesData);
-        states.forEach(state => {
+        // Merge statesData.json with MongoDB data into an object
+        const states = Object.values(statesData).reduce((acc, state) => {
             const matchedState = mongoStates.find(mongoState => mongoState.stateCode === state.code);
             if (matchedState) {
                 state.funfacts = matchedState.funfacts;
+                acc[state.code] = state;
             }
-        });
+            return acc;
+        }, {});
+
+        // Filter states based on the contig query parameter
+        if (contig === 'true') {
+            for (const key in states) {
+                if (key !== 'AK' && key !== 'HI') {
+                    delete states[key];
+                }
+            }
+        } else if (contig === 'false') {
+            for (const key in states) {
+                if (key === 'AK' || key === 'HI') {
+                    delete states[key];
+                }
+            }
+        }
 
         // Send the filtered and merged states as response
         res.json(states);
@@ -26,6 +42,8 @@ const getAllStates = async (req, res) => {
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
+
 
 // GET /states/:stateCode
 const getState = async (req, res) => {
