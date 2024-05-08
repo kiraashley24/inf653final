@@ -3,27 +3,37 @@ const State = require('../model/State');
 // GET /states/
 const getAllStates = async (req, res) => {
     try {
+        // Load statesData.json
         const statesData = require('../model/statesData.json');
         const { contig } = req.query;
-        // Check if the statesData object exists and is not empty
-         // Check if the statesData object exists and is not empty
-         if (!statesData || Object.keys(statesData).length === 0) {
-            return res.status(204).json({ 'message': 'No states found.' });
-        }
+
+        // Fetch all document data from MongoDB collection
+        const mongoStates = await State.find().exec();
+
+        // Iterate through statesData.json and merge with MongoDB data
         let states = Object.values(statesData);
+        states.forEach(state => {
+            const matchedState = mongoStates.find(mongoState => mongoState.stateCode === state.code);
+            if (matchedState) {
+                state.funfacts = matchedState.funfacts;
+            }
+        });
+
         // Filter states based on the contig query parameter
         if (contig === 'true') {
             states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
         } else if (contig === 'false') {
             states = states.filter(state => state.code === 'AK' || state.code === 'HI');
         }
-        // Send the filtered states as response
+
+        // Send the filtered and merged states as response
         res.json(states);
     } catch (err) {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
 // GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
