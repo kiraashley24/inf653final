@@ -1,11 +1,11 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const mongoose = require('mongoose');
 const connectDB = require('./config/dbConn');
 const fs = require('fs');
 const path = require('path');
-const cors = require('cors');
 const PORT = process.env.PORT || 3500;
 
 // Connect to MongoDB
@@ -13,14 +13,6 @@ connectDB();
 
 // Apply the CORS middleware
 app.use(cors());
-
-app.get('/products/:id', function (req, res, next) {
-    res.json({msg: 'This is CORS-enabled for all origins!'})
-  });
-   
-  app.listen(80, function () {
-    console.log('CORS-enabled web server listening on port 80')
-  });
 
 //serve static files
 app.use('/', express.static(path.join(__dirname, '/public')));
