@@ -4,25 +4,23 @@ const State = require('../model/State');
 const getAllStates = async (req, res) => {
     try {
         const statesData = require('../model/statesData.json');
-
-        // Get all states with funfacts from MongoDB
-        const statesWithFunFacts = await State.find({ funfacts: { $exists: true, $ne: [] } }).exec();
-
-        // Merge funfacts from MongoDB with statesData
-        let states = statesData.map(state => {
-            const stateWithFunFacts = statesWithFunFacts.find(s => s.stateCode === state.code);
-            if (stateWithFunFacts) {
-                return { ...state, funfacts: stateWithFunFacts.funfacts };
-            } else {
-                return state;
-            }
-        });
-
-        // Send the merged states as response
-        res.status(200).json(states);
+        const { contig } = req.query;
+        // Check if the statesData object exists and is not empty
+        if (!statesData || Object.keys(statesData).length === 0) {
+            return res.status(204).json({ 'message': 'No states found.' });
+        }
+        let states = Object.values(statesData);
+        // Filter states based on the contig query parameter
+        if (contig === 'true') {
+            states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
+        } else if (contig === 'false') {
+            states = states.filter(state => state.code === 'AK' || state.code === 'HI');
+        }
+        // Send the filtered states as response
+        res.json(states);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ 'message': 'Internal server error' });
     }
 };
 
