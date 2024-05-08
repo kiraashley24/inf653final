@@ -10,30 +10,29 @@ const getAllStates = async (req, res) => {
         // Fetch all document data from MongoDB collection
         const mongoStates = await State.find().exec();
 
-        // Merge statesData.json with MongoDB data into an object
-        const states = Object.values(statesData).reduce((acc, state) => {
+        // Create an object with state codes as keys
+        let statesObject = {};
+        Object.values(statesData).forEach(state => {
+            // Initialize the state object with data from JSON
+            statesObject[state.code] = { ...state };
+
+            // Find the matching state from MongoDB
             const matchedState = mongoStates.find(mongoState => mongoState.stateCode === state.code);
             if (matchedState) {
-                state.funfacts = matchedState.funfacts;
-                acc[state.code] = state;
+                // Add funfacts if they exist
+                statesObject[state.code].funfacts = matchedState.funfacts;
             }
-            return acc;
-        }, {});
+        });
 
-        // Filter states based on the contig query parameter
+        // Filter states based on the contig query parameter if needed
         if (contig === 'true') {
-            for (const key in states) {
-                if (key !== 'AK' && key !== 'HI') {
-                    delete states[key];
-                }
-            }
+            statesObject = Object.values(statesObject).filter(state => state.code !== 'AK' && state.code !== 'HI');
         } else if (contig === 'false') {
-            for (const key in states) {
-                if (key === 'AK' || key === 'HI') {
-                    delete states[key];
-                }
-            }
+            statesObject = Object.values(statesObject).filter(state => state.code === 'AK' || state.code === 'HI');
         }
+
+        // Convert the object back to an array
+        const states = Object.values(statesObject);
 
         // Send the filtered and merged states as response
         res.json(states);
@@ -42,6 +41,7 @@ const getAllStates = async (req, res) => {
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
 
 
 
