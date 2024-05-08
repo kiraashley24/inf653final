@@ -3,27 +3,38 @@ const State = require('../model/State');
 // GET /states/
 const getAllStates = async (req, res) => {
     try {
+        // Retrieve all documents from MongoDB
+        const dbStates = await State.find().exec();
+
+        // Read states data from JSON file
         const statesData = require('../model/statesData.json');
-        const { contig } = req.query;
-        // Check if the statesData object exists and is not empty
-         // Check if the statesData object exists and is not empty
-         if (!statesData || Object.keys(statesData).length === 0) {
-            return res.status(204).json({ 'message': 'No states found.' });
-        }
-        let states = Object.values(statesData);
+
+        // Iterate through JSON data and add fun facts from MongoDB
+        statesData.forEach(state => {
+            const dbState = dbStates.find(dbState => dbState.stateCode === state.code);
+            if (dbState) {
+                state.funfacts = dbState.funfacts;
+            }
+        });
+
         // Filter states based on the contig query parameter
+        const { contig } = req.query;
+        let states = Object.values(statesData);
         if (contig === 'true') {
             states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
         } else if (contig === 'false') {
             states = states.filter(state => state.code === 'AK' || state.code === 'HI');
         }
-        // Send the filtered states as response
+
+        // Send the filtered and combined states data as response
         res.json(states);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ 'message': 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
 // GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
@@ -64,13 +75,6 @@ const getState = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-
- 
-
-
-
-
-
 
 
 ///GET/states/:state/capital
@@ -212,9 +216,6 @@ const createState = async (req, res) => {
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
-
-
-
 
 
 //PATCH/states/:state/funfact
