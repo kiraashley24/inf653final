@@ -6,7 +6,8 @@ const getAllStates = async (req, res) => {
         const statesData = require('../model/statesData.json');
         const { contig } = req.query;
         // Check if the statesData object exists and is not empty
-        if (!statesData || Object.keys(statesData).length === 0) {
+         // Check if the statesData object exists and is not empty
+         if (!statesData || Object.keys(statesData).length === 0) {
             return res.status(204).json({ 'message': 'No states found.' });
         }
         let states = Object.values(statesData);
@@ -26,25 +27,30 @@ const getAllStates = async (req, res) => {
 
 
 // GET /states/:stateCode
+
 const getState = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
         return res.status(400).json({ message: 'State code is required.' });
     }
     // Convert stateCode to uppercase
-    stateCode = stateCode.toUpperCase();  // or stateCode.toLowerCase();
+    stateCode = stateCode.toUpperCase();  
     try {
         const statesData = require('../model/statesData.json');
         const state = statesData.find(state => state.code.toUpperCase() === stateCode);
         if (!state) {
             return res.status(404).json({ message: 'State not found.' });
         }
+
+        // Send state as response
         res.json(state);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+
 
 
 
