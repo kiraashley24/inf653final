@@ -1,5 +1,4 @@
 const State = require('../model/State');
-const fs = require('fs');
 
 // GET /states/
 const getAllStates = async (req, res) => {
@@ -49,16 +48,16 @@ const getState = async (req, res) => {
         const dbStates = await State.find( {stateCode}).exec();
 
         // Iterate through JSON data
-        const funfactsArray = [];
+        const funfacts = [];
         statesData.forEach(stateData => {
             const dbState = dbStates.find(dbState => dbState.stateCode === stateData.code);
             if (dbState) {
-                funfactsArray.push(...dbState.funfacts);
+                funfacts.push(...dbState.funfacts);
             }
         });
 
         // Combine the data
-        const combinedStateData = { ...state, funfacts: funfactsArray };
+        const combinedStateData = { ...state, funfacts: funfacts };
 
         // Send the combined state data as the response
         res.json(combinedStateData);
