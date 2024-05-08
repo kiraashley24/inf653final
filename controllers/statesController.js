@@ -16,8 +16,6 @@ const getAllStates = async (req, res) => {
             const matchedState = mongoStates.find(mongoState => mongoState.stateCode === state.code);
             if (matchedState) {
                 state.funfacts = matchedState.funfacts;
-            } else {
-                state.funfacts = [];
             }
         });
 
@@ -28,22 +26,13 @@ const getAllStates = async (req, res) => {
             states = states.filter(state => state.code === 'AK' || state.code === 'HI');
         }
 
-        // Convert states array to object
-        const statesObject = {};
-        states.forEach(state => {
-            statesObject[state.code] = state;
-        });
-
         // Send the filtered and merged states as response
-        res.json(statesObject);
+        res.json(states);
     } catch (err) {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
-
-
-
 
 
 // GET /states/:stateCode
