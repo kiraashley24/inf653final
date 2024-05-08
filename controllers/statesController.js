@@ -10,37 +10,38 @@ const getAllStates = async (req, res) => {
         // Fetch all document data from MongoDB collection
         const mongoStates = await State.find().exec();
 
-        // Create an object with state codes as keys
-        let statesObject = {};
-        Object.values(statesData).forEach(state => {
-            // Initialize the state object with data from JSON
-            statesObject[state.code] = { ...state };
-
-            // Find the matching state from MongoDB
+        // Iterate through statesData.json and merge with MongoDB data
+        let states = Object.values(statesData);
+        states.forEach(state => {
             const matchedState = mongoStates.find(mongoState => mongoState.stateCode === state.code);
             if (matchedState) {
-                // Add funfacts if they exist
-                statesObject[state.code].funfacts = matchedState.funfacts;
+                state.funfacts = matchedState.funfacts;
+            } else {
+                state.funfacts = [];
             }
         });
 
-        // Filter states based on the contig query parameter if needed
+        // Filter states based on the contig query parameter
         if (contig === 'true') {
-            statesObject = Object.values(statesObject).filter(state => state.code !== 'AK' && state.code !== 'HI');
+            states = states.filter(state => state.code !== 'AK' && state.code !== 'HI');
         } else if (contig === 'false') {
-            statesObject = Object.values(statesObject).filter(state => state.code === 'AK' || state.code === 'HI');
+            states = states.filter(state => state.code === 'AK' || state.code === 'HI');
         }
 
-        // Convert the object back to an array
-        const states = Object.values(statesObject);
+        // Convert states array to object
+        const statesObject = {};
+        states.forEach(state => {
+            statesObject[state.code] = state;
+        });
 
         // Send the filtered and merged states as response
-        res.json(states);
+        res.json(statesObject);
     } catch (err) {
         console.error(err);
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
 
 
 
