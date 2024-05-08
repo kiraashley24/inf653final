@@ -214,10 +214,11 @@ const createState = async (req, res) => {
 
 
 
-//PATCH/states/:state/funfact
+// PATCH /states/:state/funfact
 const updateFunFact = async (req, res) => {
     const { stateCode } = req.params;
     const { index, funfacts } = req.body;
+
     if (!stateCode) {
         return res.status(400).json({ message: 'State code is required.' });
     }
@@ -227,6 +228,7 @@ const updateFunFact = async (req, res) => {
     if (!funfacts) {
         return res.status(400).json({ message: 'State fun fact value required.' });
     }
+
     // Convert stateCode to uppercase
     const upperStateCode = stateCode.toUpperCase();
     try {
@@ -235,12 +237,14 @@ const updateFunFact = async (req, res) => {
         if (!state) {
             return res.status(404).json({ message: `State with code ${upperStateCode} not found.` });
         }
+
         // Adjust index to match zero-based array index
         const adjustedIndex = parseInt(index) - 1;
         // Check if the index is within bounds of the funfacts array
         if (adjustedIndex < 0 || adjustedIndex >= state.funfacts.length) {
-            return res.status(400).json({ message: 'Invalid index provided.' });
+            return res.status(404).json({ message: `No Fun Fact found at index ${index} for ${stateCode}.` });
         }
+
         // Update the funfact at the specified index
         state.funfacts[adjustedIndex] = funfacts;
         // Save the updated state
@@ -252,6 +256,7 @@ const updateFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
 
 //DELETE/states/:state/funfact
 const deleteFunFact = async (req, res) => {
