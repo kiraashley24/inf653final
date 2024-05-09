@@ -180,6 +180,7 @@ const getFunFact = async (req, res) => {
     }
 };
 
+
 // POST /states/:state/funfact
 const createState = async (req, res) => {
     if (!req?.body?.stateCode || !req?.body?.funfacts) {
