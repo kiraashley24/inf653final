@@ -220,15 +220,12 @@ const createState = async (req, res) => {
 // PATCH /states/:state/funfact
 const updateFunFact = async (req, res) => {
     const { stateCode } = req.params;
-    const { index, funfacts } = req.body;
+    const { index, funfact } = req.body;
 
-    if (!stateCode) {
-        return res.status(400).json({ message: 'State code is required.' });
-    }
     if (!index) {
         return res.status(400).json({ message: 'State fun fact index value required.' });
     }
-    if (!funfacts) {
+    if (!funfact) {
         return res.status(400).json({ message: 'State fun fact value required.' });
     }
 
@@ -249,16 +246,18 @@ const updateFunFact = async (req, res) => {
         }
 
         // Update the funfact at the specified index
-        state.funfacts[adjustedIndex] = funfacts;
+        state.funfacts[adjustedIndex] = funfact;
         // Save the updated state
         const updatedState = await state.save();
         // Return the updated state
         res.json(updatedState);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'State fun fact value required' });
+        res.status(500).json({ message: 'Internal server error.' });
     }
 };
+
+
 
 
 // DELETE /states/:state/funfact
