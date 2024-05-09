@@ -238,7 +238,7 @@ const updateFunFact = async (req, res) => {
             const statesData = require('../model/statesData.json');
             const stateFromData = statesData.find(state => state.code.toUpperCase() === upperStateCode);
             const stateName = stateFromData ? stateFromData.state : null;
-            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
+            return res.status(404).json({ message: `No Fun Fact found for ${stateName}` });
         }
 
         // Adjust index to match zero-based array index
