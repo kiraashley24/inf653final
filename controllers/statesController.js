@@ -223,10 +223,10 @@ const updateFunFact = async (req, res) => {
     const { index, funfact } = req.body;
 
     if (!index) {
-        return res.status(400).json({ message: 'State fun fact index value required.' });
+        return res.status(400).json({ message: 'State fun fact index value required' });
     }
     if (!funfact) {
-        return res.status(400).json({ message: 'State fun fact value required.' });
+        return res.status(400).json({ message: 'State fun fact value required' });
     }
 
     // Convert stateCode to uppercase
@@ -235,14 +235,14 @@ const updateFunFact = async (req, res) => {
         // Find the state in the database
         let state = await State.findOne({ stateCode: upperStateCode }).exec();
         if (!state) {
-            return res.status(404).json({ message: `State with code ${upperStateCode} not found.` });
+            return res.status(404).json({ message: `State with code ${upperStateCode} not found` });
         }
 
         // Adjust index to match zero-based array index
         const adjustedIndex = parseInt(index) - 1;
         // Check if the index is within bounds of the funfacts array
         if (adjustedIndex < 0 || adjustedIndex >= state.funfacts.length) {
-            return res.status(404).json({ message: `No Fun Fact found at index ${index} for ${stateCode}.` });
+            return res.status(404).json({ message: `No Fun Fact found at index ${index} for ${stateCode}` });
         }
 
         // Update the funfact at the specified index
@@ -253,7 +253,7 @@ const updateFunFact = async (req, res) => {
         res.json(updatedState);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
