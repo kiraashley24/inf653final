@@ -183,21 +183,24 @@ const getFunFact = async (req, res) => {
 
 // POST /states/:state/funfact
 const createState = async (req, res) => {
-    if (!req?.body?.stateCode || !req?.body?.funfacts) {
+    const { stateCode } = req.params;
+    const { funfacts } = req.body;
+
+    if (!funfacts) {
         return res.status(400).json({ 'message': 'State fun facts value required' });
     }
-    if (!Array.isArray(req.body.funfacts)) {
+    if (!Array.isArray(funfacts)) {
         return res.status(400).json({ 'message': 'State fun facts value must be an array' });
     }
     try {
-        let state = await State.findOne({ stateCode: req.body.stateCode }).exec();
+        let state = await State.findOne({ stateCode }).exec();
         if (!state) {
             state = await State.create({
-                stateCode: req.body.stateCode,
-                funfacts: req.body.funfacts
+                stateCode,
+                funfacts
             });
         } else {
-            state.funfacts = [...state.funfacts, ...req.body.funfacts];
+            state.funfacts = [...state.funfacts, ...funfacts];
             await state.save();
         }
         console.log('Created state:', state); // Log created state
@@ -210,6 +213,7 @@ const createState = async (req, res) => {
         res.status(500).json({ 'message': 'Internal server error' });
     }
 };
+
 
 
 
