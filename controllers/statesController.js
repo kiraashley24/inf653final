@@ -215,8 +215,6 @@ const createState = async (req, res) => {
 };
 
 
-
-
 // PATCH /states/:state/funfact
 const updateFunFact = async (req, res) => {
     const { stateCode } = req.params;
@@ -304,8 +302,6 @@ const deleteFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
-
 
 
 module.exports = {

@@ -5,7 +5,7 @@ const connectDB = async () => {
         await mongoose.connect(process.env.DATABASE_URI, {
             
         });
-        console.log("CONNECTED TO DATABASE SUCCESSFULLY");
+        console.log("CONNECTED TO DATABASE SUCCESSFULLY"); //removed UseUnified/parser due to errors about getting removed in upcoming version
     } catch (err) {
         console.error('COULD NOT CONNECT TO DATABASE:', err);
     }

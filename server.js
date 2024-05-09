@@ -23,11 +23,8 @@ app.use('/', express.static(path.join(__dirname, '/public')));
 // root URL
 app.use('/', require('./routes/root'));
 
-
-
 // Use states routes
 app.use('/states', require('./routes/states'));
-
 
 //404
 app.all('*', (req, res) => {
@@ -40,7 +37,6 @@ app.all('*', (req, res) => {
         res.type('txt').send("404 Not Found");
     }
 });
-
 
 // Read the JSON file
 fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
@@ -57,6 +53,7 @@ fs.readFile('./model/statesData.json', 'utf8', (err, data) => {
         console.error('Error parsing JSON:', err);
     }
 });
+
 // Start the server
 mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
