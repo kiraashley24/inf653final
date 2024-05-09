@@ -217,7 +217,6 @@ const createState = async (req, res) => {
 
 
 
-
 // PATCH /states/:state/funfact
 const updateFunFact = async (req, res) => {
     const { stateCode } = req.params;
@@ -236,7 +235,10 @@ const updateFunFact = async (req, res) => {
         // Find the state in the database
         let state = await State.findOne({ stateCode: upperStateCode }).exec();
         if (!state) {
-            return res.status(404).json({ message: `State with code ${upperStateCode} not found` });
+            const statesData = require('../model/statesData.json');
+            const stateFromData = statesData.find(state => state.code.toUpperCase() === upperStateCode);
+            const stateName = stateFromData ? stateFromData.state : null;
+            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
         }
 
         // Adjust index to match zero-based array index
@@ -260,12 +262,6 @@ const updateFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
-
-
-
-
-
 
 // DELETE /states/:state/funfact
 const deleteFunFact = async (req, res) => {
