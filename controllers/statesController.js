@@ -25,6 +25,7 @@ const getAllStates = async (req, res) => {
     }
 };
 
+// GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
     if (!stateCode) {
@@ -43,7 +44,7 @@ const getState = async (req, res) => {
         }
 
         // Query MongoDB for funfacts
-        const dbStates = await State.find({ stateCode }).exec();
+        const dbStates = await State.find( {stateCode}).exec();
 
         // Iterate through JSON data
         const funfacts = [];
@@ -55,10 +56,7 @@ const getState = async (req, res) => {
         });
 
         // Combine the data
-        let combinedStateData = { ...state };
-        if (funfacts.length > 0) {
-            combinedStateData.funnfacts = funfacts;
-        }
+        const combinedStateData = { ...state, funfacts: funfacts };
 
         // Send the combined state data as the response
         res.json(combinedStateData);
@@ -67,8 +65,6 @@ const getState = async (req, res) => {
         res.status(500).json({ message: 'Internal server error.' });
     }
 };
-
-
 
 
 ///GET/states/:state/capital
