@@ -256,7 +256,7 @@ const updateFunFact = async (req, res) => {
         res.json(updatedState);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'State fun fact value required' });
     }
 };
 
@@ -277,13 +277,13 @@ const deleteFunFact = async (req, res) => {
         // Find the state in the database
         let dbState = await State.findOne({ stateCode: upperStateCode }).exec();
         if (!dbState) {
-            return res.status(404).json({ message: `State with code ${upperStateCode} not found.` });
+            return res.status(404).json({ message: `State with code ${upperStateCode} not found` });
         }
         // Adjust index to match zero-based array index
         const adjustedIndex = parseInt(index) - 1;
         // Check if the index is within funfacts array
         if (adjustedIndex < 0 || adjustedIndex >= dbState.funfacts.length) {
-            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}.` });
+            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
         }
         // Remove the funfact at the specific index
         dbState.funfacts.splice(adjustedIndex, 1);
@@ -293,7 +293,7 @@ const deleteFunFact = async (req, res) => {
         res.json(updatedState);
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: 'Internal server error.' });
+        res.status(500).json({ message: 'Internal server error' });
     }
 };
 
