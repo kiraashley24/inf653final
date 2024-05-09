@@ -229,7 +229,7 @@ const updateFunFact = async (req, res) => {
         return res.status(400).json({ message: 'State fun fact value required' });
     }
 
-    // Convert stateCode to uppercase
+    // Convert stateCode to match
     const upperStateCode = stateCode.toUpperCase();
     try {
         // Find the state in the database
@@ -243,7 +243,7 @@ const updateFunFact = async (req, res) => {
 
         // Adjust index to match zero-based array index
         const adjustedIndex = parseInt(index) - 1;
-        // Check if the index is within bounds of the funfacts array
+        // Check if the index is within the funfacts array
         if (adjustedIndex < 0 || adjustedIndex >= state.funfacts.length) {
             const statesData = require('../model/statesData.json');
             const stateFromData = statesData.find(state => state.code.toUpperCase() === upperStateCode);
@@ -275,7 +275,7 @@ const deleteFunFact = async (req, res) => {
     if (!stateCode || !index) {
         return res.status(400).json({ message: 'State fun fact index value required' });
     }
-    // Convert stateCode to uppercase
+    // Convert stateCode to match
     const upperStateCode = stateCode.toUpperCase();
     try {
         const statesData = require('../model/statesData.json');
@@ -288,7 +288,7 @@ const deleteFunFact = async (req, res) => {
         }
         // Adjust index to match zero-based array index
         const adjustedIndex = parseInt(index) - 1;
-        // Check if the index is within funfacts array
+        // Check if the index is in funfacts
         if (adjustedIndex < 0 || adjustedIndex >= dbState.funfacts.length) {
             return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
         }
@@ -296,7 +296,7 @@ const deleteFunFact = async (req, res) => {
         dbState.funfacts = dbState.funfacts.filter((_, i) => i !== adjustedIndex);
         // Save the updated state
         const updatedState = await dbState.save();
-        // Return the updated state with desired property order
+        // Return the updated state with proper order
         const { _id, stateCode, funfacts, __v } = updatedState;
         res.json({ _id, stateCode, funfacts, __v });
     } catch (err) {
