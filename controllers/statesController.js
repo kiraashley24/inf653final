@@ -25,7 +25,6 @@ const getAllStates = async (req, res) => {
     }
 };
 
-
 // GET /states/:stateCode
 const getState = async (req, res) => {
     let { stateCode } = req.params;
