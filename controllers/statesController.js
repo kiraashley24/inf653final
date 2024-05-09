@@ -168,7 +168,7 @@ const getFunFact = async (req, res) => {
         const stateName = state ? state.state : null;
         const stateData = await State.findOne({ stateCode }).exec();
         if (!stateData || !stateData.funfacts || stateData.funfacts.length === 0) {
-            const message = stateName ? `No fun facts found for ${stateName}.` : 'No fun facts found for this state.';
+            const message = stateName ? `No Fun Facts found for ${stateName}.` : 'No Fun Facts found for this state.';
             return res.status(404).json({ message });
         }
         const randomIndex = Math.floor(Math.random() * stateData.funfacts.length);
