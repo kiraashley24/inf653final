@@ -236,14 +236,14 @@ const updateFunFact = async (req, res) => {
         // Find the state in the database
         let state = await State.findOne({ stateCode: upperStateCode }).exec();
         if (!state) {
-            return res.status(404).json({ message: `State with code ${upperStateCode} not found` });
+            return res.status(404).json({ message: `No Fun Facts found for Arizona` });
         }
 
         // Adjust index to match zero-based array index
         const adjustedIndex = parseInt(index) - 1;
         // Check if the index is within bounds of the funfacts array
         if (adjustedIndex < 0 || adjustedIndex >= state.funfacts.length) {
-            return res.status(404).json({ message: `No Fun Fact found at that index for Kansas` });
+            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
         }
 
         // Update the funfact at the specified index
