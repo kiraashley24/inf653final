@@ -217,6 +217,7 @@ const createState = async (req, res) => {
 
 
 
+
 // PATCH /states/:state/funfact
 const updateFunFact = async (req, res) => {
     const { stateCode } = req.params;
@@ -242,7 +243,7 @@ const updateFunFact = async (req, res) => {
         const adjustedIndex = parseInt(index) - 1;
         // Check if the index is within bounds of the funfacts array
         if (adjustedIndex < 0 || adjustedIndex >= state.funfacts.length) {
-            return res.status(404).json({ message: `No Fun Fact found at index ${index} for ${stateCode}` });
+            return res.status(404).json({ message: `No Fun Fact found at that index for Kansas` });
         }
 
         // Update the funfact at the specified index
@@ -256,6 +257,8 @@ const updateFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
+
 
 
 
