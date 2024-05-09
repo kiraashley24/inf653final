@@ -236,13 +236,16 @@ const updateFunFact = async (req, res) => {
         // Find the state in the database
         let state = await State.findOne({ stateCode: upperStateCode }).exec();
         if (!state) {
-            return res.status(404).json({ message: `No Fun Facts found for Arizona` });
+            return res.status(404).json({ message: `State with code ${upperStateCode} not found` });
         }
 
         // Adjust index to match zero-based array index
         const adjustedIndex = parseInt(index) - 1;
         // Check if the index is within bounds of the funfacts array
         if (adjustedIndex < 0 || adjustedIndex >= state.funfacts.length) {
+            const statesData = require('../model/statesData.json');
+            const stateFromData = statesData.find(state => state.code.toUpperCase() === upperStateCode);
+            const stateName = stateFromData ? stateFromData.state : null;
             return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
         }
 
@@ -257,6 +260,7 @@ const updateFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 
