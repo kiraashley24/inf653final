@@ -266,7 +266,7 @@ const deleteFunFact = async (req, res) => {
     const { stateCode } = req.params;
     const { index } = req.body;
     if (!stateCode || !index) {
-        return res.status(400).json({ message: 'State code and fun fact index value required' });
+        return res.status(400).json({ message: 'State fun fact index value required' });
     }
     // Convert stateCodes to all match
     const upperStateCode = stateCode.toUpperCase();
@@ -277,7 +277,7 @@ const deleteFunFact = async (req, res) => {
         // Find the state in the database
         let dbState = await State.findOne({ stateCode: upperStateCode }).exec();
         if (!dbState) {
-            return res.status(404).json({ message: `State with code ${upperStateCode} not found` });
+            return res.status(404).json({ message: `No Fun Facts found for ${stateName}` });
         }
         // Adjust index to match zero-based array index
         const adjustedIndex = parseInt(index) - 1;
