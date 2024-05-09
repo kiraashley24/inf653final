@@ -286,7 +286,7 @@ const deleteFunFact = async (req, res) => {
             return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
         }
         // Remove the funfact at the specific index
-        dbState.funfacts.splice(adjustedIndex, 1);
+        dbState.funfacts = dbState.funfacts.filter((_, i) => i !== adjustedIndex);
         // Save the updated state
         const updatedState = await dbState.save();
         // Return the updated state with desired property order
@@ -297,6 +297,7 @@ const deleteFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 
