@@ -261,14 +261,14 @@ const updateFunFact = async (req, res) => {
 };
 
 
-//DELETE/states/:state/funfact
+// DELETE /states/:state/funfact
 const deleteFunFact = async (req, res) => {
     const { stateCode } = req.params;
     const { index } = req.body;
     if (!stateCode || !index) {
         return res.status(400).json({ message: 'State fun fact index value required' });
     }
-    // Convert stateCodes to all match
+    // Convert stateCode to uppercase
     const upperStateCode = stateCode.toUpperCase();
     try {
         const statesData = require('../model/statesData.json');
@@ -289,13 +289,15 @@ const deleteFunFact = async (req, res) => {
         dbState.funfacts.splice(adjustedIndex, 1);
         // Save the updated state
         const updatedState = await dbState.save();
-        // Return the updated state
-        res.json(updatedState);
+        // Return the updated state with desired property order
+        const { _id, stateCode, funfacts, __v } = updatedState;
+        res.json({ _id, stateCode, funfacts, __v });
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 module.exports = {
