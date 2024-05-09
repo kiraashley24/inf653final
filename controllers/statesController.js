@@ -238,7 +238,7 @@ const updateFunFact = async (req, res) => {
             const statesData = require('../model/statesData.json');
             const stateFromData = statesData.find(state => state.code.toUpperCase() === upperStateCode);
             const stateName = stateFromData ? stateFromData.state : null;
-            return res.status(404).json({ message: `No Fun Fact found for ${stateName}` });
+            return res.status(404).json({ message: `No Fun Facts found for ${stateName}` });
         }
 
         // Adjust index to match zero-based array index
@@ -248,7 +248,11 @@ const updateFunFact = async (req, res) => {
             const statesData = require('../model/statesData.json');
             const stateFromData = statesData.find(state => state.code.toUpperCase() === upperStateCode);
             const stateName = stateFromData ? stateFromData.state : null;
-            return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
+            if (!state.funfacts || state.funfacts.length === 0) {
+                return res.status(404).json({ message: `No Fun Facts found for ${stateName}` });
+            } else {
+                return res.status(404).json({ message: `No Fun Fact found at that index for ${stateName}` });
+            }
         }
 
         // Update the funfact at the specified index
@@ -262,6 +266,7 @@ const updateFunFact = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 // DELETE /states/:state/funfact
 const deleteFunFact = async (req, res) => {
